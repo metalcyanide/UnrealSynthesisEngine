@@ -5,10 +5,10 @@ package GrammarsLanguage;
  * Given a non-terminal, return a list of production rules, which are each just partial programs.
  * Note that non-terminals are really just partial programs themselves.
  */
-public interface Grammar {
+public interface IGrammar {
 	/*
 	 * Given a non-terminal t, return as a list the (partial) programs resulting from the productions of t.
 	 *
 	 */
-	Programs[] getProductions(<nonTerminal extends Program> t);
+	IProgram[] getProductions(<nonTerminal extends IProgram> t);
 }

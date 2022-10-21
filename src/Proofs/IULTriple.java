@@ -8,25 +8,25 @@ import java.io.BufferedInputStream;
    Interface for unrealizability triples {P} S {Q}
    Eventually, we'll probably want to extend this to include a context \Gamma, but let's call it a stretch goal :p
  */
-public interface ULTriple {
+public interface IULTriple {
 
   /*
   Given a buffer to read from, constructs triple.
  */
-  Proof parseProofWithVerification(BufferedInputStream readFrom);
+  IProof parseProofWithVerification(BufferedInputStream readFrom);
 
   /*
     Returns precondition
    */
-  Condition getPreCondition();
+  ICondition getPreCondition();
 
   /*
     Returns postcondition
    */
-  Condition getPostCondition();
+  ICondition getPostCondition();
 
   /*
      Returns "S" in {P} S {Q} -- middle part of UL Triple
    */
-  Program getProgram();
+  IProgram getProgram();
 }

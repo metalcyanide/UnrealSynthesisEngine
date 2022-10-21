@@ -5,13 +5,13 @@ import java.io.BufferedInputStream;
 /*
    Interface for the P, Q condition objects of the logic.
  */
-public interface Condition <T extends Condition<T>>{
+public interface ICondition <T extends ICondition<T>>{
 
   /*
     Given a buffer to read from, reads condition from sequence of chars and returns a condition object.
     Should probably be a static constructor.
    */
-  Condition parseCondition(BufferedInputStream readFrom);
+  ICondition parseCondition(BufferedInputStream readFrom);
 
   /*
     Checks if self implies b, given that self and b are of the same type.

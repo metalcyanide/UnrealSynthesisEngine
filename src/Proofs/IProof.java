@@ -5,18 +5,18 @@ import java.io.BufferedInputStream;
 /*
    Interface for proof objects.
  */
-public interface Proof {
+public interface IProof {
     /*
       Given a buffer to read from, constructs proof.
       Should probably perform verification during construction.
       Ought to be static constructor.
      */
-    Proof parseProofWithVerification(BufferedInputStream readFrom);
+    IProof parseProofWithVerification(BufferedInputStream readFrom);
 
     /*
      * Returns claim that the proof claims to prove
      */
-    ULTriple getClaim();
+    IULTriple getClaim();
 
     /*
      * Returns the name of the inference rule this proof first applies.
@@ -26,10 +26,10 @@ public interface Proof {
     /*
      * Returns proofs of the claims that the top level inference rule relies on.
      */
-    Proof[] getSubProofs();
+    IProof[] getSubProofs();
 
     /*
      * Processes ProofVisitor, routing to the correct visit method in the visitor, depending on the proof's type.
      */
-    RetType accept(<V extends ProofVisitor<RetType>> visitor);
+    RetType accept(<V extends IProofVisitor<RetType>> visitor);
 }

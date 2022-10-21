@@ -5,7 +5,7 @@ import java.io.BufferedInputStream;
 /*
    Interface for proof objects.
  */
-public interface ProofVisitor <RetType extends Object> {
+public interface IProofVisitor <RetType extends Object> {
 
    /*
     * We should have something like this for each type of inference rule/proof.
