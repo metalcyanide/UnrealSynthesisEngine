@@ -1,7 +1,7 @@
 package Proofs;
 
-import ConditionLanguage.Condition;
-import GrammarsLanguage.Program;
+import ConditionLanguage.ICondition;
+import GrammarsLanguage.IProgram;
 import java.io.BufferedInputStream;
 
 /*
