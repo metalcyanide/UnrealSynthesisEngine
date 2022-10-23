@@ -1,6 +1,6 @@
 package GrammarsLanguage;
 
-import java.io.BufferedInputStream;
+import java.util.Scanner;
 
 /*
    An interface for the middle part of the UL triple (the "S" in {P} S {Q}).
@@ -14,6 +14,6 @@ public interface IProgram {
   Given a buffer to read from, constructs program object.
   Ought to be static constructor.
  */
-  IProgram parseProgram(BufferedInputStream readFrom);
+  IProgram parseProgram(Scanner readFrom);
 
 }

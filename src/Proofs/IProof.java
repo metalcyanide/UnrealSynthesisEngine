@@ -1,6 +1,6 @@
 package Proofs;
 
-import java.io.BufferedInputStream;
+import java.util.Scanner;
 
 /*
    Interface for proof objects.
@@ -11,7 +11,7 @@ public interface IProof {
       Should probably perform verification during construction.
       Ought to be static constructor.
      */
-    IProof parseProofWithVerification(BufferedInputStream readFrom);
+    IProof parseProofWithVerification(Scanner readFrom);
 
     /*
      * Returns claim that the proof claims to prove

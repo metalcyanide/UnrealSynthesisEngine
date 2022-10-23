@@ -2,7 +2,7 @@ package Proofs;
 
 import ConditionLanguage.ICondition;
 import GrammarsLanguage.IProgram;
-import java.io.BufferedInputStream;
+import java.util.Scanner;
 
 /*
    Interface for unrealizability triples {P} S {Q}
@@ -13,7 +13,7 @@ public interface IULTriple {
   /*
   Given a buffer to read from, constructs triple.
  */
-  IProof parseProofWithVerification(BufferedInputStream readFrom);
+  IProof parseProofWithVerification(Scanner readFrom);
 
   /*
     Returns precondition
