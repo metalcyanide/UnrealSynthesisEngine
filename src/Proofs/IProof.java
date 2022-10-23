@@ -31,5 +31,5 @@ public interface IProof {
     /*
      * Processes ProofVisitor, routing to the correct visit method in the visitor, depending on the proof's type.
      */
-    RetType accept(<V extends IProofVisitor<RetType>> visitor);
+    <RetType, V extends IProofVisitor<RetType>> RetType accept(V visitor);
 }

@@ -10,5 +10,5 @@ public interface IGrammar {
 	 * Given a non-terminal t, return as a list the (partial) programs resulting from the productions of t.
 	 *
 	 */
-	IProgram[] getProductions(<nonTerminal extends IProgram> t);
+	<nonTerminal extends IProgram> IProgram[] getProductions(nonTerminal t);
 }
