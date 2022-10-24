@@ -8,10 +8,9 @@ import java.util.Scanner;
 public interface IProof {
     /*
       Given a buffer to read from, constructs proof.
-      Should probably perform verification during construction.
       Ought to be static constructor.
      */
-    IProof parseProofWithVerification(Scanner readFrom);
+    IProof parseProof(Scanner readFrom);
 
     /*
      * Returns claim that the proof claims to prove
