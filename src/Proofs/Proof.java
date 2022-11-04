@@ -1,17 +1,21 @@
 package Proofs;
 
+import Proofs.Claim.IClaim;
 import Proofs.IProof;
-import Proofs.IULTriple;
+import Proofs.Claim.IClaim;
 import java.util.Scanner;
 import java.util.function.Function;
 
 public class Proof implements IProof {
-  private Proof[] children;
+  private Proof[] children; // Children of the proof (proofs of hypotheses)
   private Function<Proof, Boolean> validationFunction; // Should be 0-ary function, but Java doesn't have that type? We can make our own if we want.
-  private String ruleName;
-  private IULTriple claim;
+  private String ruleName; // Name of the inference rule
+  private IClaim claim; // Claim this proof/rule is proving
 
-  public Proof(String rule, Function<Proof, Boolean> f, IULTriple claim, Proof... children)
+  /**
+   * Generic constructor used in factories.
+   */
+  Proof(String rule, Function<Proof, Boolean> f, IClaim claim, Proof... children)
   {
     this.claim = claim;
     this.children = children;
@@ -19,24 +23,47 @@ public class Proof implements IProof {
     this.ruleName = rule;
   }
 
+  /**
+  * Given a scanner with a string representation of a proof, constructs a proof object describing said proof.
+   * Should use the parse method of IULTriples. Haven't added contexts yet...
+  */
   // TODO Rahul
-  static public Proof parseProof(Scanner readFrom) {
-	  return new Proof(null, null, null);
+  public Proof parseProof(Scanner readFrom) {
+    // Parse args
+    // Use appropriate ProofFactory to get proof
+    return null;
   }
 
-  public IULTriple getClaim() {
+  /*
+   * Getter for claim that proof should prove.
+   */
+  public IClaim getClaim() {
 	  return claim;
   }
 
+  /*
+   * Getter for name of inference rule type.
+   */
   public String getTopInferenceRuleTag() {
     return ruleName;
   }
 
+  /*
+   * Getter for children of this proof (proofs of its hypotheses)
+   */
   public IProof[] getChildren() {
     return children;
   }
 
+  /*
+   * Returns a bool telling you whether this proof is correct, according to the semantics of validationFunction.
+   */
   public boolean validate() {
+    for (IProof proof: this.getChildren()) {
+      if (!proof.validate()) {
+          return false;
+      }
+    }
     return this.validationFunction.apply(this);
   }
 

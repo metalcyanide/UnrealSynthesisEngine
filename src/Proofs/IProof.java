@@ -1,5 +1,6 @@
 package Proofs;
 
+import Proofs.Claim.IClaim;
 import java.util.Scanner;
 
 /*
@@ -7,17 +8,9 @@ import java.util.Scanner;
  */
 public interface IProof {
     /*
-      Given a buffer to read from, constructs proof.
-      Ought to be static constructor.
-     */
-    static IProof parseProof(Scanner readFrom) {
-        return null;
-    }
-
-    /*
      * Returns claim that the proof claims to prove
      */
-    IULTriple getClaim();
+    IClaim getClaim();
 
     /*
      * Returns the name of the inference rule this proof first applies.
@@ -28,6 +21,11 @@ public interface IProof {
      * Returns proofs of the claims that the top level inference rule relies on.
      */
     IProof[] getChildren();
+
+    /*
+     * Returns a bool, telling you whether the given proof is correct or not.
+     */
+    boolean validate();
 
     /*
      * Processes ProofVisitor, routing to the correct visit method in the visitor, depending on the proof's type.

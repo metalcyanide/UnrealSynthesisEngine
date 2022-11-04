@@ -1,6 +1,5 @@
 package ConditionLanguage;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 /*
@@ -20,15 +19,14 @@ public class Condition implements ICondition<Condition>{
 
   /*
     Given a buffer to read from, reads condition from sequence of chars and returns a condition object.
-    Should probably be a static constructor.
    */
-  public Condition parseCondition(Scanner readFrom) {
+  public Condition(Scanner readFrom) throws Exception {
     StringBuilder condString = new StringBuilder();
 
     // Read "{|"
     if (!readFrom.next().equals("{") || !readFrom.next().equals("|")) {
       // TODO We could make a parse exception class if we wanted.
-      return null;
+      throw new Exception("bad condtion");
     }
 
     // Extract condition string
@@ -40,10 +38,10 @@ public class Condition implements ICondition<Condition>{
 
     // Read "|}"
     if (!readFrom.next().equals("}")) {
-      return null;
+      throw new Exception("bad condtion");
     }
     
-    return new Condition(condString.toString());
+    this.condition = condString.toString();
   }
 
   /*

@@ -1,7 +1,5 @@
 package GrammarsLanguage;
 
-import java.util.Scanner;
-
 /*
    An interface for the middle part of the UL triple (the "S" in {P} S {Q}).
    Ideally, we'd have a method here to extract the useful info from a program.
@@ -12,8 +10,7 @@ public interface IProgram {
 
   /*
   Given a buffer to read from, constructs program object.
-  Ought to be static constructor.
- */
-  IProgram parseProgram(Scanner readFrom);
-
+  Needs a static constructor of the form:
+  public Program(Scanner readFrom);
+   */
 }
