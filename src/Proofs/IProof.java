@@ -10,7 +10,9 @@ public interface IProof {
       Given a buffer to read from, constructs proof.
       Ought to be static constructor.
      */
-    IProof parseProof(Scanner readFrom);
+    static IProof parseProof(Scanner readFrom) {
+        return null;
+    }
 
     /*
      * Returns claim that the proof claims to prove
@@ -25,10 +27,10 @@ public interface IProof {
     /*
      * Returns proofs of the claims that the top level inference rule relies on.
      */
-    IProof[] getSubProofs();
+    IProof[] getChildren();
 
     /*
      * Processes ProofVisitor, routing to the correct visit method in the visitor, depending on the proof's type.
      */
-    <RetType, V extends IProofVisitor<RetType>> RetType accept(V visitor);
+//    <RetType, V extends IProofVisitor<RetType>> RetType accept(V visitor);
 }
