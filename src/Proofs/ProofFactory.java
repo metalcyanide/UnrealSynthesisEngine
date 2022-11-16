@@ -2,6 +2,8 @@ package Proofs;
 
 import Proofs.Claim.Claim;
 import Proofs.Claim.IClaim;
+
+import java.util.Collections;
 import java.util.function.Function;
 
 import ConditionLanguage.Condition;
@@ -9,7 +11,24 @@ import ConditionLanguage.ICondition;
 import GrammarsLanguage.IProgram;
 
 public enum ProofFactory {
-  Assign((x) -> true),
+  Assign((x) -> {
+    if(x.getChildren().length != 1) {
+      return false;
+    }
+    ICondition hypPrec = x.getChildren()[0].getClaim().getPreCondition();
+    ICondition hypPostc = x.getChildren()[0].getClaim().getPostCondition();
+    ICondition claimPrec = x.getClaim().getPreCondition();
+    ICondition claimPostc = x.getClaim().getPostCondition();
+    IProgram hypProg = x.getChildren()[0].getClaim().getProgram();
+    IProgram claimProg = x.getClaim().getProgram();
+    String varOld = null; // Get var on lhs of assignment
+    String varNew = hypPostc.getFreshVar();
+    String e = hypPostc.getET();
+   return hypPrec.equals(claimPrec)
+  //  && claimProg.isAssign()
+  //  && hypProg.equals(claimProg.getChildren()[0])
+   && hypPostc.subs(varNew, varOld).and(new Condition(varOld + "=" + e)).existentialBind(varNew).equals(claimPostc);
+  }),
   Seq((x) -> {
     if(x.getChildren().length != 2) {
       return false;
@@ -23,7 +42,7 @@ public enum ProofFactory {
     IProgram lHypProg = x.getChildren()[0].getClaim().getProgram();
     IProgram rHypProg = x.getChildren()[1].getClaim().getProgram();
     IProgram claimProg = x.getClaim().getProgram();
-   return lHypPrec.equals(claimPrec) && lHypPostc.equals(rHypPrec) && rHypPrec.equals(claimPostc);
+   return lHypPrec.equals(claimPrec) && lHypPostc.equals(rHypPrec) && rHypPostc.equals(claimPostc);
   //  && claimProg == lHypProg ; rHypProg
   }),
   Zero(x -> {
@@ -33,7 +52,7 @@ public enum ProofFactory {
     String e_old = prec.getET();
     String e_new = prec.getNextET();
    return x.getChildren().length == 0 
-    && prec.subs(e_new, e_old).and(new Condition(e_old + "=0")).existentialBind(e_new).equals(prec);
+    && prec.subs(e_new, e_old).and(new Condition(e_old + "=0")).existentialBind(e_new).equals(postc);
     // && prog == 0;
   }),
   One(x -> {
@@ -43,7 +62,7 @@ public enum ProofFactory {
     String e_old = prec.getET();
     String e_new = prec.getNextET();
    return x.getChildren().length == 0 
-    && prec.subs(e_new, e_old).and(new Condition(e_old + "=1")).existentialBind(e_new).equals(prec);
+    && prec.subs(e_new, e_old).and(new Condition(e_old + "=1")).existentialBind(e_new).equals(postc);
     // && prog == 1;
   }),
   True(x -> {
@@ -53,7 +72,7 @@ public enum ProofFactory {
     String b_old = prec.getBT();
     String b_new = prec.getNextBT();
    return x.getChildren().length == 0 
-    && prec.subs(b_new, b_old).and(new Condition(b_old + "=t")).existentialBind(b_new).equals(prec);
+    && prec.subs(b_new, b_old).and(new Condition(b_old + "=t")).existentialBind(b_new).equals(postc);
     // && prog == t;
   }),
   False(x -> {
@@ -63,7 +82,7 @@ public enum ProofFactory {
     String b_old = prec.getBT();
     String b_new = prec.getNextBT();
    return x.getChildren().length == 0 
-    && prec.subs(b_new, b_old).and(new Condition(b_old + "=f")).existentialBind(b_new).equals(prec);
+    && prec.subs(b_new, b_old).and(new Condition(b_old + "=f")).existentialBind(b_new).equals(postc);
     // && prog == f;
   }),
   Var((x) -> {
@@ -74,7 +93,7 @@ public enum ProofFactory {
     String e_new = prec.getNextET();
     String var = null; // check that prog is a var and get the string var value
    return x.getChildren().length == 0 
-   && prec.subs(e_new, e_old).and(new Condition(e_old + "=" + var)).existentialBind(e_new).equals(prec);
+   && prec.subs(e_new, e_old).and(new Condition(e_old + "=" + var)).existentialBind(e_new).equals(postc);
   }),
   Plus((x) -> true),
   GrmDisj((x) -> true),
@@ -88,14 +107,23 @@ public enum ProofFactory {
     ICondition claimPostc = x.getClaim().getPostCondition();
     IProgram hypProg = x.getChildren()[0].getClaim().getProgram();
     IProgram claimProg = x.getClaim().getProgram();
-    String b_old = claimPostc.getBT();
-    String b_new = claimPostc.getNextBT();
+    String b_old = hypPostc.getBT();
+    String b_new = hypPostc.getNextBT();
    return hypPrec.equals(claimPrec)
-  //  && !claimProg == hypProg
+  //  && claimProg.isNot()
+  //  && hypProg.equals(claimProg.getChildren()[0])
    && hypPostc.subs(b_new, b_old).and(new Condition(b_old + "=!" + b_new)).existentialBind(b_new).equals(claimPostc);
   }),
   Comp((x) -> true),
-  Inv((x) -> true),
+  Inv((x) -> {
+    if(x.getChildren().length != 0) {
+      return false;
+    }
+    ICondition claimPrec = x.getClaim().getPreCondition();
+    ICondition claimPostc = x.getClaim().getPostCondition();
+    IProgram claimProg = x.getClaim().getProgram();
+   return claimPrec.equals(claimPostc) && Collections.disjoint(claimPrec.getVars(), claimProg.getVars());
+  }),
   HP((x) -> true),
   ApplyHP((x) -> true),
   And((x) -> true),

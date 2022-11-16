@@ -1,5 +1,7 @@
 package ConditionLanguage;
 
+import java.util.Set;
+
 /*
    Interface for the P, Q condition objects of the logic.
  */
@@ -48,4 +50,9 @@ public interface ICondition <T extends ICondition<T>> {
    * Returns an unused variable name 
    */
   String getFreshVar();
+
+  /*
+   * Returns a list of all vars that appear in the condition 
+   */
+  Set<String> getVars();
 }

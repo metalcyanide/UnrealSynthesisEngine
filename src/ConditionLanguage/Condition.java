@@ -1,6 +1,7 @@
 package ConditionLanguage;
 
 import java.util.Scanner;
+import java.util.Set;
 
 /*
    Interface for the P, Q condition objects of the logic.
@@ -93,6 +94,11 @@ public class Condition implements ICondition<Condition>{
   public String getFreshVar() {
     // TODO Implement this
     return "fish";
+  }
+  
+  public Set<String> getVars() {
+    // TODO Implement this
+    return null;
   }
 
   // TODO fill in everything then have this be equivalence, perhaps?
