@@ -43,4 +43,9 @@ public interface ICondition <T extends ICondition<T>> {
    * Returns name of next variable that would be used for b_t
    */
   String getNextBT();
+
+  /*
+   * Returns an unused variable name 
+   */
+  String getFreshVar();
 }

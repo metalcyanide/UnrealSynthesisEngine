@@ -90,10 +90,14 @@ public class Condition implements ICondition<Condition>{
     return "fish";
   }
   
-  // TODO fill in everything then remove this later
+  public String getFreshVar() {
+    // TODO Implement this
+    return "fish";
+  }
+
+  // TODO fill in everything then have this be equivalence, perhaps?
   @Override
   public boolean equals(Object c){
     return true;
   }
-
 }
