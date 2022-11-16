@@ -29,9 +29,7 @@ public class Proof implements IProof {
   */
   // TODO Rahul
   public Proof parseProof(Scanner readFrom) {
-    // Parse args
-    // Use appropriate ProofFactory to get proof
-    return null;
+    return ProofParser.getInstance().parseProof(readFrom);
   }
 
   /*
