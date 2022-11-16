@@ -3,6 +3,7 @@ package Proofs;
 import Proofs.Claim.IClaim;
 import Proofs.IProof;
 import Proofs.Claim.IClaim;
+import Proofs.Claim.Claim;
 import java.util.Scanner;
 import java.util.function.Function;
 
@@ -27,9 +28,15 @@ public class Proof implements IProof {
   * Given a scanner with a string representation of a proof, constructs a proof object describing said proof.
    * Should use the parse method of IULTriples. Haven't added contexts yet...
   */
-  // TODO Rahul
   public Proof parseProof(Scanner readFrom) {
-    return ProofParser.getInstance().parseProof(readFrom);
+    Proof head = null;
+//    while(readFrom.hasNext()) {
+//        ProofParser.ParserObject info = ProofParser.getInstance().parseProofLine(readFrom.nextLine());
+//        IClaim claim = new Claim(new Scanner(info.triple));
+//        Proof currProof = new Proof(info.triple, null, claim, ...);
+//    }
+    //TODO: return head node
+    return head;
   }
 
   /*
