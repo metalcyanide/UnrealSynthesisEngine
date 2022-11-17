@@ -31,7 +31,8 @@ public class Claim implements IClaim {
   public Claim(Scanner readFrom) throws Exception {
     this.context = new Context(readFrom);    // TODO fix these as static methods
     this.precondition = new Condition(readFrom);
-    this.partialProgram = (IProgram)(new Context(readFrom));  // TODO implement actual program class @Chaithanya
+    this.partialProgram = null;
+    new Context(readFrom);  // TODO implement actual program class @Chaithanya
     this.postcondition = new Condition(readFrom);
   }
 

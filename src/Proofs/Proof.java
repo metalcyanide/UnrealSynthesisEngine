@@ -1,9 +1,12 @@
 package Proofs;
 
 import Proofs.Claim.IClaim;
+import Proofs.Context.Context;
 import Proofs.IProof;
 import Proofs.Claim.IClaim;
 import Proofs.Claim.Claim;
+
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.function.Function;
 
@@ -30,15 +33,15 @@ public class Proof implements IProof {
   * Given a scanner with a string representation of a proof (single line), constructs a proof object describing said proof.
   * Should use the parse method of IULTriples. Haven't added contexts yet...
   */
-  public Proof parseProof(Scanner readFrom) {
+  public static Proof parseProof(Scanner readFrom) throws Exception {
     Proof parsedProof = null;
     //parses one proof line
     ProofParser.ParserObject info = ProofParser.getInstance().parseProofLine(readFrom.nextLine());
     //TODO update to use nonempty context
-    IClaim claim = new Claim(new Context(new Scanner("")), new Scanner(info.triple));
+    IClaim claim = new Claim(new Scanner(info.claim));
     Proof[] children = new Proof[info.references.size()];
     for(int i = 0; i < info.references.size(); i++) {
-        children[i] = proofMap.get(info.references.at(i));
+        children[i] = proofMap.get(info.references.get(i));
     }
 
     // generate relevant ProofFactory

@@ -25,20 +25,20 @@ public class Condition implements ICondition<Condition>{
     StringBuilder condString = new StringBuilder();
 
     // Read "{|"
-    if (!readFrom.next().equals("{") || !readFrom.next().equals("|")) {
+    if (readFrom.findInLine(".").charAt(0) != '{' || readFrom.findInLine(".").charAt(0) !='|') {
       // TODO We could make a parse exception class if we wanted.
       throw new Exception("bad condtion");
     }
 
     // Extract condition string
-    String n = readFrom.next();
-    while (!n.equals("|")) {
+    char n = readFrom.findInLine(".").charAt(0);
+    while (n != '|') {
       condString.append(n);
-      n = readFrom.next();
+      n = readFrom.findInLine(".").charAt(0);
     }
 
     // Read "|}"
-    if (!readFrom.next().equals("}")) {
+    if (readFrom.findInLine(".").charAt(0) != '}') {
       throw new Exception("bad condtion");
     }
     
