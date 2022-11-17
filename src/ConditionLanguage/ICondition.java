@@ -1,9 +1,10 @@
 package ConditionLanguage;
 
-import java.util.Set;
+import java.util.ArrayList;
 
 /*
    Interface for the P, Q condition objects of the logic.
+   Should never be two variables a & b s.t. a = b_1, b_2, b_1', b_2' 
  */
 public interface ICondition <T extends ICondition<T>> {
   /*
@@ -54,5 +55,5 @@ public interface ICondition <T extends ICondition<T>> {
   /*
    * Returns a list of all vars that appear in the condition 
    */
-  Set<String> getVars();
+  ArrayList<String> getVars();
 }

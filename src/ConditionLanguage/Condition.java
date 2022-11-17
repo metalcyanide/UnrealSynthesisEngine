@@ -1,7 +1,7 @@
 package ConditionLanguage;
 
+import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Set;
 
 /*
    Interface for the P, Q condition objects of the logic.
@@ -96,7 +96,7 @@ public class Condition implements ICondition<Condition>{
     return "fish";
   }
   
-  public Set<String> getVars() {
+  public ArrayList<String> getVars() {
     // TODO Implement this
     return null;
   }
