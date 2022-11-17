@@ -41,7 +41,7 @@ public class Proof implements IProof {
     IClaim claim = new Claim(new Scanner(info.claim));
     Proof[] children = new Proof[info.references.size()];
     for(int i = 0; i < info.references.size(); i++) {
-        children[i] = proofMap.get(info.references.get(i));
+        children[i] = Proof.proofMap.get(info.references.get(i));
     }
 
     // generate relevant ProofFactory
@@ -69,6 +69,8 @@ public class Proof implements IProof {
         case "Sub2": parsedProof = ProofFactory.Sub2.generateProof(claim, children); break; 
         default: throw new IllegalArgumentException("invalid proof type");
     }
+
+    Proof.proofMap.put(info.currReference, parsedProof);
     return parsedProof;
   }
 
