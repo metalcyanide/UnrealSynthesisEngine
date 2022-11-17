@@ -2,6 +2,9 @@ package Proofs.Context;
 
 import java.util.Scanner;
 
+import ConditionLanguage.ICondition;
+import GrammarsLanguage.IProgram;
+
 /*
  * Dummy stand-in for context class. Should have some functionality... eventually.
  */
@@ -15,7 +18,7 @@ public class Context implements IContext {
   public Context(Scanner readFrom) throws Exception {
     StringBuilder contString = new StringBuilder();
 
-    // Read "{|"
+    // Read "{"
     if (!readFrom.next().equals("{")) {
       // TODO We could make a parse exception class if we wanted.
       throw new Exception("bad context");
@@ -33,5 +36,15 @@ public class Context implements IContext {
 
   public String toString() {
     return "{" + this.context + "}";
+  }
+
+  public boolean inContext(ICondition prec, IProgram prog, ICondition postc) {
+    // TODO Implement later
+    return true;
+  }
+
+  public IContext addToContext(ICondition prec, IProgram prog, ICondition postc) {
+    // TODO Implement later
+    return this;
   }
 }

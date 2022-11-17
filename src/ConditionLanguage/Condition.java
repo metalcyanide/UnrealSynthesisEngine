@@ -1,5 +1,6 @@
 package ConditionLanguage;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /*
@@ -13,7 +14,7 @@ public class Condition implements ICondition<Condition>{
    * Basic constructor.
    */
   public Condition (String stuff){
-	condition = stuff;
+	  condition = stuff;
   }
 
 
@@ -55,5 +56,54 @@ public class Condition implements ICondition<Condition>{
     return condition;
   }
 
-  // We may need to be able to do transformations on conditions depending on what inference rules we support.
+  public Condition subs(String newVar, String oldVar) {
+    // TODO Implement this
+    return this;
+  }
+
+  public Condition existentialBind(String newVar) {
+    // TODO Implement this
+    return this;
+  }
+
+  public Condition and(Condition b) {
+    // TODO Implement this
+    return this;
+  }
+
+  public String getET() {
+    // TODO Implement this
+    return "fish";
+  }
+
+  public String getNextET() {
+    // TODO Implement this
+    return "fish";
+  }
+
+  public String getBT() {
+    // TODO Implement this
+    return "fish";
+  }
+
+  public String getNextBT() {
+    // TODO Implement this
+    return "fish";
+  }
+  
+  public String getFreshVar() {
+    // TODO Implement this
+    return "fish";
+  }
+  
+  public ArrayList<String> getVars() {
+    // TODO Implement this
+    return new ArrayList<String>();
+  }
+
+  // TODO fill in everything then have this be equivalence, perhaps?
+  @Override
+  public boolean equals(Object c){
+    return true;
+  }
 }

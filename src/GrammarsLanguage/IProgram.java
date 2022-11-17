@@ -31,7 +31,7 @@ public interface IProgram {
   /*
    * Returns a list of the AST children of this node.
    */
-  public String[] getChildren();
+  public IProgram[] getChildren();
 
   /*
    * If this node is a non-terminal, returns a list of rhs production rules as programs.
