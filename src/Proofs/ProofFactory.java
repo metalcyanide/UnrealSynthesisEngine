@@ -1,10 +1,10 @@
 package Proofs;
 
-import Proofs.Claim.Claim;
 import Proofs.Claim.IClaim;
 import Proofs.Context.IContext;
 
-import java.util.ArrayList;
+import java.util.stream.*;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Function;
 
@@ -29,7 +29,8 @@ public enum ProofFactory {
    return hypPrec.equals(claimPrec)
    && claimProg.getNodeType().equals("Assign")
    && hypProg.equals(claimProg.getChildren()[1])
-   && hypPostc.subs(varNew, varOld).and(new Condition(varOld + "=" + e)).existentialBind(varNew).equals(claimPostc);
+   && hypPostc.subs(varNew, varOld).and(new Condition(varOld + "=" + e)).existentialBind(varNew).equals(claimPostc)
+   && Arrays.stream(x.getChildren()).map(IProof::validate).reduce(true, (a, b) -> a && b);
   }),
   Seq((x) -> {
     if(x.getChildren().length != 2) {
@@ -47,7 +48,8 @@ public enum ProofFactory {
    return lHypPrec.equals(claimPrec) && lHypPostc.equals(rHypPrec) && rHypPostc.equals(claimPostc)
    && claimProg.getNodeType().equals("Seq")
    && claimProg.getChildren()[0].equals(lHypProg)
-   && claimProg.getChildren()[1].equals(rHypProg);
+   && claimProg.getChildren()[1].equals(rHypProg)
+   && Arrays.stream(x.getChildren()).map(IProof::validate).reduce(true, (a, b) -> a && b);
   }),
   Zero(x -> {
     ICondition prec = x.getClaim().getPreCondition();
@@ -117,7 +119,8 @@ public enum ProofFactory {
    return hypPrec.equals(claimPrec)
    && claimProg.getNodeType().equals("Not")
    && hypProg.equals(claimProg.getChildren()[0])
-   && hypPostc.subs(b_new, b_old).and(new Condition(b_old + "=!" + b_new)).existentialBind(b_new).equals(claimPostc);
+   && hypPostc.subs(b_new, b_old).and(new Condition(b_old + "=!" + b_new)).existentialBind(b_new).equals(claimPostc)
+   && Arrays.stream(x.getChildren()).map(IProof::validate).reduce(true, (a, b) -> a && b);
   }),
   Comp((x) -> true),
   Inv((x) -> {
@@ -150,14 +153,36 @@ public enum ProofFactory {
     IProgram lHypProg = x.getChildren()[0].getClaim().getProgram();
     IProgram rHypProg = x.getChildren()[1].getClaim().getProgram();
     IProgram claimProg = x.getClaim().getProgram();
-    ArrayList<String> rename_1 = claimPrec.getVars(); rename_1.replaceAll(y -> y + "_1");
-    ArrayList<String> rename_2 = claimPrec.getVars(); rename_2.replaceAll(y -> y + "_2");
-    ArrayList<String> rename_1p = claimPrec.getVars(); rename_1p.replaceAll(y -> y + "_1'");
-    ArrayList<String> rename_2p = claimPrec.getVars(); rename_2p.replaceAll(y -> y + "_2'");
-    return claimProg.getNodeType().equals("And")
+
+    Stream<String> renameConjuncts_1 = claimPrec.getVars().stream().map(y -> y + "=" + y + "_1");
+    Stream<String> renameConjuncts_2 = claimPrec.getVars().stream().map(y -> y + "=" + y + "_2");
+    Stream<String> renameConjuncts_1p = claimPrec.getVars().stream().map(y -> y + "=" + y + "_1'");
+    Stream<String> renameConjuncts_2p = claimPrec.getVars().stream().map(y -> y + "=" + y + "_2'");
+
+    //  Construct Q1[v1'/v] and Q2[v2'/v]
+    ICondition lHypPostcSubs = x.getChildren()[0].getClaim().getPostCondition();
+    ICondition rHypPostcSubs = x.getChildren()[1].getClaim().getPostCondition();
+    for (String var : (String[]) claimPrec.getVars().toArray()) {
+      lHypPostcSubs = lHypPostcSubs.subs(var + "_1'", var);
+      rHypPostcSubs = rHypPostcSubs.subs(var + "_2'", var);
+    }
+    // Construct P ^ Q1[v1'/v] ^ Q2[v2'/v]
+    ICondition conjunct = claimPrec.and(lHypPostcSubs).and(rHypPostcSubs).and(new Condition(renameConjuncts_1.reduce("", (a, b) -> a + " ^ " + b))).and(new Condition(renameConjuncts_2.reduce("", (a, b) -> a + " ^ " + b)));
+    // Do [bt'/bt]
+    String old_bt = conjunct.getBT(); // TODO This is probably wrong
+    String next_bt = conjunct.getNextBT();
+    conjunct.subs(next_bt, old_bt).existentialBind(next_bt);
+    for (String var : (String[]) claimPrec.getVars().toArray()) {
+      lHypPostcSubs = lHypPostcSubs.subs(var + "_1'", var);
+      rHypPostcSubs = rHypPostcSubs.subs(var + "_2'", var);
+    }
+    return claimProg.getNodeType().equals("And")  // Is child1 And child2
     && claimProg.getChildren()[0].equals(lHypProg)
-    && claimProg.getChildren()[1].equals(rHypProg);
-    // && lHypPrec.equals(claimPrec.and(new Condition("")));
+    && claimProg.getChildren()[1].equals(rHypProg)
+    && lHypPrec.equals(claimPrec.and(new Condition(renameConjuncts_1.reduce("", (a, b) -> a + " ^ " + b))))   // Preconditions of hypotheses are of correct form
+    && rHypPrec.equals(claimPrec.and(new Condition(renameConjuncts_2.reduce("", (a, b) -> a + " ^ " + b))))
+    && true
+    && Arrays.stream(x.getChildren()).map((IProof y) -> y.validate()).reduce(true, (a, b) -> a && b); // Children are valid
 // TODO - finish this
   }),
   ITE((x) -> true),

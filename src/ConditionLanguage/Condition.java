@@ -98,7 +98,7 @@ public class Condition implements ICondition<Condition>{
   
   public ArrayList<String> getVars() {
     // TODO Implement this
-    return null;
+    return new ArrayList<String>();
   }
 
   // TODO fill in everything then have this be equivalence, perhaps?
