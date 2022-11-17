@@ -13,6 +13,8 @@ public class Proof implements IProof {
   private String ruleName; // Name of the inference rule
   private IClaim claim; // Claim this proof/rule is proving
 
+  private static HashMap<Integer, Proof> proofMap = new HashMap<Integer, Proof>();
+
   /**
    * Generic constructor used in factories.
    */
@@ -25,18 +27,46 @@ public class Proof implements IProof {
   }
 
   /**
-  * Given a scanner with a string representation of a proof, constructs a proof object describing said proof.
-   * Should use the parse method of IULTriples. Haven't added contexts yet...
+  * Given a scanner with a string representation of a proof (single line), constructs a proof object describing said proof.
+  * Should use the parse method of IULTriples. Haven't added contexts yet...
   */
   public Proof parseProof(Scanner readFrom) {
-    Proof head = null;
-//    while(readFrom.hasNext()) {
-//        ProofParser.ParserObject info = ProofParser.getInstance().parseProofLine(readFrom.nextLine());
-//        IClaim claim = new Claim(new Scanner(info.triple));
-//        Proof currProof = new Proof(info.triple, null, claim, ...);
-//    }
-    //TODO: return head node
-    return head;
+    Proof parsedProof = null;
+    //parses one proof line
+    ProofParser.ParserObject info = ProofParser.getInstance().parseProofLine(readFrom.nextLine());
+    //TODO update to use nonempty context
+    IClaim claim = new Claim(new Context(new Scanner("")), new Scanner(info.triple));
+    Proof[] children = new Proof[info.references.size()];
+    for(int i = 0; i < info.references.size(); i++) {
+        children[i] = proofMap.get(info.references.at(i));
+    }
+
+    // generate relevant ProofFactory
+    switch(info.proofType) {
+        case "Assign": parsedProof = ProofFactory.Assign.generateProof(claim, children); break; 
+        case "Seq": parsedProof = ProofFactory.Seq.generateProof(claim, children); break; 
+        case "Zero": parsedProof = ProofFactory.Zero.generateProof(claim, children); break; 
+        case "One": parsedProof = ProofFactory.One.generateProof(claim, children); break; 
+        case "True": parsedProof = ProofFactory.True.generateProof(claim, children); break; 
+        case "False": parsedProof = ProofFactory.False.generateProof(claim, children); break; 
+        case "Var": parsedProof = ProofFactory.Var.generateProof(claim, children); break; 
+        case "Plus": parsedProof = ProofFactory.Plus.generateProof(claim, children); break; 
+        case "GrmDisj": parsedProof = ProofFactory.GrmDisj.generateProof(claim, children); break; 
+        case "Not": parsedProof = ProofFactory.Not.generateProof(claim, children); break; 
+        case "Comp": parsedProof = ProofFactory.Comp.generateProof(claim, children); break; 
+        case "Inv": parsedProof = ProofFactory.Inv.generateProof(claim, children); break; 
+        case "HP": parsedProof = ProofFactory.HP.generateProof(claim, children); break; 
+        case "ApplyHP": parsedProof = ProofFactory.ApplyHP.generateProof(claim, children); break; 
+        case "And": parsedProof = ProofFactory.And.generateProof(claim, children); break; 
+        case "ITE": parsedProof = ProofFactory.ITE.generateProof(claim, children); break; 
+        case "While": parsedProof = ProofFactory.While.generateProof(claim, children); break; 
+        case "Weaken": parsedProof = ProofFactory.Weaken.generateProof(claim, children); break; 
+        case "Conj": parsedProof = ProofFactory.Conj.generateProof(claim, children); break; 
+        case "Sub1": parsedProof = ProofFactory.Sub1.generateProof(claim, children); break; 
+        case "Sub2": parsedProof = ProofFactory.Sub2.generateProof(claim, children); break; 
+        default: throw new IllegalArgumentException("invalid proof type");
+    }
+    return parsedProof;
   }
 
   /*

@@ -20,16 +20,18 @@ public class ProofParser {
         List<Integer> references;
         int currReference;
         String triple;
+        String proofType;
 
-        public ParserObject(List<Integer> references, int curr, String triple) {
+        public ParserObject(List<Integer> references, int curr, String triple, String type) {
             this.references = references;
             this.currReference = curr;
             this.triple = triple;
+            this.proofType = type;
         }
     }
 
     // use this method to parse proofs from a scanner
-    // structure of proof:[i]* --> [j] context |- {|P|}S{|Q|}
+    // structure of proof:[i]* --> proofType [j] context |- {|P|}S{|Q|}
     // note: very jank
     public ParserObject parseProofLine(String proofLine) {
         // Get references for proof nodes that are required to prove this one
@@ -42,6 +44,9 @@ public class ProofParser {
             proofReferences.add(Integer.parseInt(result.substring(result.indexOf("[")+1, result.indexOf("]"))));
             result = scan.next(); //assumes space delimiter
         }
+        
+        // Get current proof type
+        String proofType = scan.next();
 
         // Get current proof node reference
         result = scan.next();
@@ -55,7 +60,7 @@ public class ProofParser {
         String triple = scan.nextLine().replaceAll("\\s", "");;
 
         // Return parser info
-        return new ParserObject(proofReferences, currReference, triple);
+        return new ParserObject(proofReferences, currReference, triple, proofType);
     }
 
     /*
