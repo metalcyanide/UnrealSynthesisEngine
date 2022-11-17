@@ -1,16 +1,52 @@
 package GrammarsLanguage;
 
+import java.util.ArrayList;
+
 /*
-   An interface for the middle part of the UL triple (the "S" in {P} S {Q}).
-   Ideally, we'd have a method here to extract the useful info from a program.
-   By that I mean the top-level program construct (as in an AST), or more specifically the form of the program that determines what inference rules may be applied.
-   I'm not 100% sure what this information looks like, but figuring it our is a big todo before we can get a working verifier.
+   A little messy, but this should be sufficient to get us the info we need.
+   An aesthetic redesign can be done later, if ever.
  */
 public interface IProgram {
+ /*
+  * Returns the type of the program (root of AST) as one of the following:
+  * True - T
+  * False - F
+  * 0 - 0
+  * 1 - 1
+  * Plus - +
+  * Minus - -
+  * Times - x
+  * Div - /
+  * And - ^
+  * Less - <
+  * Equal - ==
+  * ITE - if then else
+  * Assign - :=
+  * Seq - ;
+  * While - while do
+  * NonTerm - T (non-terminal symbol)
+  */
+  public String getNodeType();
 
   /*
-  Given a buffer to read from, constructs program object.
-  Needs a static constructor of the form:
-  public Program(Scanner readFrom);
+   * Returns a list of the AST children of this node.
    */
+  public String[] getChildren();
+
+  /*
+   * If this node is a non-terminal, returns a list of rhs production rules as programs.
+   */
+  public IProgram[] getProductionRHS();
+
+  /*
+   * Returns var as string if program is a var (e.g., x).
+   * Returns lhs of an assignment.
+   * Else, returns null.
+   */
+  public String getVarName();
+
+  /*
+  * Returns a set containing all program variables in the program
+  */
+  public ArrayList<String> getVars();
 }
