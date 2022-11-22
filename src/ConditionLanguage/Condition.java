@@ -6,7 +6,7 @@ import java.util.Scanner;
 /*
    Interface for the P, Q condition objects of the logic.
  */
-public class Condition implements ICondition<Condition>{
+public class Condition implements ICondition{
 
   private String condition;
 
@@ -48,7 +48,7 @@ public class Condition implements ICondition<Condition>{
   /*
     Checks if self implies b, given that self and b are of the same type.
    */
-  public boolean implies(Condition b) {
+  public boolean implies(ICondition b) {
 	return true;
   }
 
@@ -56,44 +56,44 @@ public class Condition implements ICondition<Condition>{
     return condition;
   }
 
-  public Condition subs(String newVar, String oldVar) {
+  public Condition subs(ArrayList<String> newVar, ArrayList<String> oldVar) {
     // TODO Implement this
     return this;
   }
 
-  public Condition existentialBind(String newVar) {
+  public Condition existentialBind(ArrayList<String> newVar) {
     // TODO Implement this
     return this;
   }
 
-  public Condition and(Condition b) {
+  public Condition and(ICondition b) {
     // TODO Implement this
     return this;
   }
 
-  public String getET() {
+  public ArrayList<String> getETs() {
     // TODO Implement this
-    return "fish";
+    return new ArrayList<String>();
   }
 
-  public String getNextET() {
+  // public String getNextET() {
+  //   // TODO Implement this
+  //   return "fish";
+  // }
+
+  public ArrayList<String> getBTs() {
     // TODO Implement this
-    return "fish";
+    return new ArrayList<String>();
   }
 
-  public String getBT() {
-    // TODO Implement this
-    return "fish";
-  }
-
-  public String getNextBT() {
-    // TODO Implement this
-    return "fish";
-  }
+  // public String getNextBT() {
+  //   // TODO Implement this
+  //   return "fish";
+  // }
   
-  public String getFreshVar() {
+  public ArrayList<String> getFreshVars(int n) {
     // TODO Implement this
-    return "fish";
+    return new ArrayList<String>();
   }
   
   public ArrayList<String> getVars() {
@@ -101,9 +101,24 @@ public class Condition implements ICondition<Condition>{
     return new ArrayList<String>();
   }
 
-  // TODO fill in everything then have this be equivalence, perhaps?
+  // TODO fill in everything then have this be equivalence, perhaps? Or syntactic equality up to commutative/ associative ops
   @Override
   public boolean equals(Object c){
     return true;
+  }
+  
+  public ArrayList<String> getSubs(ArrayList<String> oldVars, ICondition oldCondition) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public boolean isSubs(ArrayList<String> oldVars, ICondition oldCondition) {
+    // TODO Auto-generated method stub
+    return true;
+  }
+
+  public ArrayList<String> getVarsByName(String x) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }
