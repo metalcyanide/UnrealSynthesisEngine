@@ -19,13 +19,13 @@ public class ProofParser {
     class ParserObject {
         List<Integer> references;
         int currReference;
-        String triple;
+        String claim;
         String proofType;
 
-        public ParserObject(List<Integer> references, int curr, String triple, String type) {
+        public ParserObject(List<Integer> references, int curr, String claim, String type) {
             this.references = references;
             this.currReference = curr;
-            this.triple = triple;
+            this.claim = claim;
             this.proofType = type;
         }
     }
@@ -52,22 +52,28 @@ public class ProofParser {
         result = scan.next();
         int currReference = Integer.parseInt(result.substring(result.indexOf("[")+1, result.indexOf("]")));
 
-        //TODO implement context, assume empty for now
-        String turnstile = scan.next();
-        if(!turnstile.equals("|-")) throw new IllegalArgumentException("invalid proof, error code 2");
+//        String turnstile = scan.next();
+//        if(!turnstile.equals("|-")) throw new IllegalArgumentException("invalid proof, error code 2");
+//
+//        // Get triple, without any spaces
+//        String triple = scan.nextLine().replaceAll("\\s", "");
 
-        // Get triple, without any spaces
-        String triple = scan.nextLine().replaceAll("\\s", "");;
+        String claim = scan.nextLine().replaceAll("\\s", "");
 
         // Return parser info
-        return new ParserObject(proofReferences, currReference, triple, proofType);
+        return new ParserObject(proofReferences, currReference, claim, proofType);
     }
 
     /*
      * Test method for proof parsing
      */
-    private static void main(String args[]) {
-        String proofExample = "[0] [1] --> [2] |- {|True|}Statement{|Q|}";
-        ProofParser.getInstance().parseProofLine(proofExample);
+    public static void main(String args[]) throws Exception {
+//        String proofExample = "[0] [1] --> [2] {} |- {|True|}{Statement}{|Q|}";
+        String proofExample = "[0] [1] --> Zero [2] {}{|True|}{Statement}{|Q|}";
+        ParserObject info = ProofParser.getInstance().parseProofLine(proofExample);
+        System.out.println(info.claim);
+
+        Proof proof = Proof.parseProof(new Scanner(proofExample));
+        System.out.println(proof.getClaim());
     }
 }

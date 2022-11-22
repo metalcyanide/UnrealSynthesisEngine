@@ -19,16 +19,16 @@ public class Context implements IContext {
     StringBuilder contString = new StringBuilder();
 
     // Read "{"
-    if (!readFrom.next().equals("{")) {
+    if (readFrom.findInLine(".").charAt(0) != '{') {
       // TODO We could make a parse exception class if we wanted.
       throw new Exception("bad context");
     }
 
     // Extract context string
-    String n = readFrom.next();
-    while (!n.equals("}")) {
+    char n = readFrom.findInLine(".").charAt(0);
+    while (n != '}') {
       contString.append(n);
-      n = readFrom.next();
+      n = readFrom.findInLine(".").charAt(0);
     }
 
     this.context = contString.toString();
