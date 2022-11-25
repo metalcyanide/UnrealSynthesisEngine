@@ -65,9 +65,16 @@ public class Condition implements ICondition{
     }
 
     String subCond = condString.substring(1, condString.length()-1);
-    String command = subCond.substring(0, subCond.indexOf("(")).replaceAll("\\s", "");
-    String remaining = subCond.substring(subCond.indexOf("("));
-    int term1 = remaining.indexOf(','); //todo: this doesn't work, need to parse into tokens first
+    String command = subCond.substring(0, subCond.indexOf(" ")).replaceAll("\\s", "");
+    String remaining = subCond.substring(subCond.indexOf(" ")+1);
+    int term1 = 0;
+    int parenCount = 0;
+    char[] remainArray = remaining.toCharArray();
+    do {
+      if(remainArray[term1] == '(') parenCount++;
+      if(remainArray[term1] == ')') parenCount--;
+      term1++;
+    } while(parenCount > 0);
 
     switch(command) {
       case "AND": {
@@ -100,12 +107,7 @@ public class Condition implements ICondition{
         throw new UnsupportedOperationException("Operation not supported: " + command);
     }
   }
-
-//  private static void main(String[] args) {
-//    Expr root = Condition.parseConditionString("(AND (+ (INTCONST 2), (INTCONST 3)), (INTCONST 1))");
-//    System.out.println(root.toString());
-//  }
-
+  
   //TODO: interface with z3 (likely input IR of formula), return result query
   private boolean checkSmtQuery() { //TODO: args to method
     return true;
