@@ -1,5 +1,9 @@
 package ConditionLanguage;
 
+import ConditionLanguage.Expressions.Boolean.*;
+import ConditionLanguage.Expressions.Expr;
+import ConditionLanguage.Expressions.Integer.*;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -9,6 +13,7 @@ import java.util.Scanner;
 public class Condition implements ICondition{
 
   private String condition;
+  private Expr root;
 
   /*
    * Basic constructor.
@@ -41,15 +46,76 @@ public class Condition implements ICondition{
     if (readFrom.findInLine(".").charAt(0) != '}') {
       throw new Exception("bad condtion");
     }
-    
+
     this.condition = condString.toString();
+    root = parseConditionString(condString.toString());
+  }
+
+  /*
+   * Recursive procedure to take a string and construct an AST
+   * representing the condition.
+   */
+  private Expr parseConditionString(String condString) {
+    if(condString == null || condString.length() == 0) {
+      throw new IllegalStateException("empty string on condition parsing");
+    }
+
+    if(condString.charAt(0) != '(' || condString.charAt(condString.length()-1) != ')') {
+      throw new IllegalArgumentException("invalid parenthesis on condition input");
+    }
+
+    String subCond = condString.substring(1, condString.length()-1);
+    String command = subCond.substring(0, subCond.indexOf("(")).replaceAll("\\s", "");
+    String remaining = subCond.substring(subCond.indexOf("("));
+    int term1 = remaining.indexOf(','); //todo: this doesn't work, need to parse into tokens first
+
+    switch(command) {
+      case "AND": {
+        if(term1 == -1) {
+          throw new IllegalArgumentException("parsing error: no comma found");
+        }
+        Expr child1 = parseConditionString(remaining.substring(0, term1));
+        Expr child2 = parseConditionString(remaining.substring(term1 + 1));
+        return new AndExpr(child1, child2);
+      }
+      case "+": {
+        if(term1 == -1) {
+          throw new IllegalArgumentException("parsing error: no comma found");
+        }
+        Expr child1 = parseConditionString(remaining.substring(0, term1));
+        Expr child2 = parseConditionString(remaining.substring(term1+1));
+        return new PlusExpr(child1, child2);
+      }
+      case "INTCONST": {
+        int value = Integer.parseInt(remaining);
+        return new IntConstExpr(value);
+      }
+//      case "=": {
+//        int term1 = remaining.indexOf(',');
+//        Expr child1 = parseConditionString(remaining.substring(0, term1 - 1));
+//        Expr child2 = parseConditionString(remaining.substring(term1 + 1));
+//        return new EqualExpr(child1, child2);
+//      }
+      default:
+        throw new UnsupportedOperationException("Operation not supported: " + command);
+    }
+  }
+
+//  private static void main(String[] args) {
+//    Expr root = Condition.parseConditionString("(AND (+ (INTCONST 2), (INTCONST 3)), (INTCONST 1))");
+//    System.out.println(root.toString());
+//  }
+
+  //TODO: interface with z3 (likely input IR of formula), return result query
+  private boolean checkSmtQuery() { //TODO: args to method
+    return true;
   }
 
   /*
     Checks if self implies b, given that self and b are of the same type.
    */
   public boolean implies(ICondition b) {
-	return true;
+	return checkSmtQuery();
   }
 
   public String toString() {
