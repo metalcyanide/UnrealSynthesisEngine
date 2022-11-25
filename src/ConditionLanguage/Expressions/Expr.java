@@ -12,18 +12,22 @@ public abstract class Expr {
     }
     public enum ExprKind
     {
-        //TODO implement all of these
+        //TODO implement remaining
         //Boolean
-        AND, OR, IMPL, EQ, GEQ, GT,
+        AND, OR, NOT, IMPL,
+        //Comparison
+        EQ, GEQ, GT,
         //Integer
         PLUS, MINUS, MULT, DIV, MOD,
         //Constants/Variables
-        TRUE, FALSE, ICONST, IVAR, BVAR
+        ICONST, BCONST, IVAR
     }
 
-    public abstract ExprKind getKind();
-    public abstract ExprType getType();
+    public abstract ExprKind getKind(); //used to check/cast generic Expr
+    public abstract ExprType getType(); //used to type check arguments
     public abstract String toString();
     //TODO converter to z3
-//    public abstract String toSMT();
+//    public abstract String toSMT(); //converts AST into a z3 query
+    //TODO pretty print?
+//    public abstract String prettyPrint(); //prints out entire AST
 }

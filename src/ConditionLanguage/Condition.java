@@ -77,37 +77,52 @@ public class Condition implements ICondition{
     } while(parenCount > 0);
 
     switch(command) {
-      case "AND": {
-        if(term1 == -1) {
-          throw new IllegalArgumentException("parsing error: no comma found");
-        }
-        Expr child1 = parseConditionString(remaining.substring(0, term1));
-        Expr child2 = parseConditionString(remaining.substring(term1 + 1));
-        return new AndExpr(child1, child2);
-      }
-      case "+": {
-        if(term1 == -1) {
-          throw new IllegalArgumentException("parsing error: no comma found");
-        }
-        Expr child1 = parseConditionString(remaining.substring(0, term1));
-        Expr child2 = parseConditionString(remaining.substring(term1+1));
-        return new PlusExpr(child1, child2);
-      }
       case "INTCONST": {
         int value = Integer.parseInt(remaining);
         return new IntConstExpr(value);
       }
-//      case "=": {
-//        int term1 = remaining.indexOf(',');
-//        Expr child1 = parseConditionString(remaining.substring(0, term1 - 1));
-//        Expr child2 = parseConditionString(remaining.substring(term1 + 1));
-//        return new EqualExpr(child1, child2);
-//      }
+      case "BOOLCONST": {
+        if(remaining.equals("T")) return new BoolConstExpr(true);
+        else if (remaining.equals("F")) return new BoolConstExpr(false);
+        else throw new IllegalArgumentException("BoolConst requires either T or F");
+      }
+      case "INTVAR": {
+        return new IntVarExpr(remaining);
+      }
+      case "NOT": {
+        Expr child = parseConditionString(remaining);
+        return new NotExpr(child);
+      }
+      case "AND": {
+        Expr child1 = parseConditionString(remaining.substring(0, term1));
+        Expr child2 = parseConditionString(remaining.substring(term1+1));
+        return new AndExpr(child1, child2);
+      }
+      case "OR": {
+        Expr child1 = parseConditionString(remaining.substring(0, term1));
+        Expr child2 = parseConditionString(remaining.substring(term1+1));
+        return new OrExpr(child1, child2);
+      }
+      case "+": {
+        Expr child1 = parseConditionString(remaining.substring(0, term1));
+        Expr child2 = parseConditionString(remaining.substring(term1+1));
+        return new PlusExpr(child1, child2);
+      }
+      case "=": {
+        Expr child1 = parseConditionString(remaining.substring(0, term1));
+        Expr child2 = parseConditionString(remaining.substring(term1+1));
+        return new EqualExpr(child1, child2);
+      }
       default:
         throw new UnsupportedOperationException("Operation not supported: " + command);
     }
   }
-  
+
+//  public static void main(String[] args) {
+//    Expr root = Condition.parseConditionString("(AND (= (INTCONST 2) (INTCONST 3)) (BOOLCONST T))");
+//    System.out.println(root.toString());
+//  }
+
   //TODO: interface with z3 (likely input IR of formula), return result query
   private boolean checkSmtQuery() { //TODO: args to method
     return true;
