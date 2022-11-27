@@ -4,6 +4,7 @@ import Proofs.Claim.IClaim;
 import Proofs.Context.IContext;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Function;
 
@@ -15,6 +16,8 @@ import GrammarsLanguage.IProgram;
  * The general model for checking that conditions are correct is thus:
  * 1. We construct a syntactically valid condition where we choose the names of new variables arbitrarily.
  * 2. We ask whether the condition we have in the proof matches what we generated, modulo the names of the variables we made up.
+ *
+ * TODO: Add checks that contexts agree, perhaps as a helper function for ease of writing
  */
 public enum ProofFactory{
   Assign((x) -> {
@@ -261,7 +264,27 @@ public enum ProofFactory{
     IProgram claimProg = x.getClaim().getProgram();
    return claimPrec.equals(claimPostc) && Collections.disjoint(claimPrec.getVars(), claimProg.getVars());
   }),
-  HP((x) -> true),
+  HP((x) -> {
+    ICondition claimPrec = x.getClaim().getPreCondition();
+    ICondition claimPostc = x.getClaim().getPostCondition();
+    IProgram claimProg = x.getClaim().getProgram();
+    if (!claimProg.getNodeType().equals("NonTerm")) {
+      return false;
+    }
+    ArrayList<IProgram> productions= new ArrayList<IProgram>(Arrays.asList(claimProg.getProductionRHS()));
+    for (IProof child: x.getChildren()) {
+      // Match one proof child to one production rule, need not assume in order
+      if (!productions.contains(child.getClaim().getProgram())) {
+        return false;
+      }
+      productions.remove(child.getClaim().getProgram());
+      // Check pre- and post-conditions and contexts
+      if (!child.getClaim().getPreCondition().equals(claimPrec) || !child.getClaim().getPostCondition().equals(claimPostc) || child.getClaim().getContext().inContext(claimPrec, claimProg, claimPostc)) {
+        return false;
+      }
+    }
+    return productions.isEmpty();
+  }),
   ApplyHP((x) -> {
     IContext claimCtx = x.getClaim().getContext();
     ICondition claimPrec = x.getClaim().getPreCondition();
@@ -269,7 +292,6 @@ public enum ProofFactory{
     IProgram claimProg = x.getClaim().getProgram();
     return (x.getChildren().length == 0) && claimCtx.inContext(claimPrec, claimProg, claimPostc);
   }),
-  // Continue revisions below
   And((x) -> {
     if(x.getChildren().length != 2) {
       return false;
@@ -334,10 +356,101 @@ public enum ProofFactory{
   }),
   ITE((x) -> true),
   While((x) -> true),
-  Weaken((x) -> true),
-  Conj((x) -> true),
-  Sub1((x) -> true),
-  Sub2((x) -> true);
+  Weaken((x) -> {
+    if(x.getChildren().length != 1) {
+      return false;
+    }
+    ICondition hypPrec = x.getChildren()[0].getClaim().getPreCondition();
+    ICondition hypPostc = x.getChildren()[0].getClaim().getPostCondition();
+    ICondition claimPrec = x.getClaim().getPreCondition();
+    ICondition claimPostc = x.getClaim().getPostCondition();
+    IProgram hypProg = x.getChildren()[0].getClaim().getProgram();
+    IProgram claimProg = x.getClaim().getProgram();
+    // TODO What is N_1 \subseteq N in the rule?
+    return claimProg.equals(hypProg) &&
+               claimPrec.implies(hypPrec) &&
+               hypPostc.implies(claimPostc);
+  }),
+  Conj((x) -> {
+    if(x.getChildren().length != 2) {
+      return false;
+    }
+    ICondition lHypPrec = x.getChildren()[0].getClaim().getPreCondition();
+    ICondition lHypPostc = x.getChildren()[0].getClaim().getPostCondition();
+    ICondition rHypPrec = x.getChildren()[1].getClaim().getPreCondition();
+    ICondition rHypPostc = x.getChildren()[1].getClaim().getPostCondition();
+    ICondition claimPrec = x.getClaim().getPreCondition();
+    ICondition claimPostc = x.getClaim().getPostCondition();
+    IProgram lHypProg = x.getChildren()[0].getClaim().getProgram();
+    IProgram rHypProg = x.getChildren()[1].getClaim().getProgram();
+    IProgram claimProg = x.getClaim().getProgram();
+  return claimProg.equals(lHypProg) &&
+         claimProg.equals(rHypProg) &&
+         claimPrec.equals(lHypPrec) &&
+         claimPrec.equals(rHypPrec) &&
+         claimPostc.equals(lHypPostc.and(rHypPostc));
+  }),
+  Sub1((x) -> {
+    if(x.getChildren().length != 1) {
+      return false;
+    }
+    ICondition hypPrec = x.getChildren()[0].getClaim().getPreCondition();
+    ICondition hypPostc = x.getChildren()[0].getClaim().getPostCondition();
+    ICondition claimPrec = x.getClaim().getPreCondition();
+    ICondition claimPostc = x.getClaim().getPostCondition();
+    IProgram hypProg = x.getChildren()[0].getClaim().getProgram();
+    IProgram claimProg = x.getClaim().getProgram();
+
+    // Determine z as in rule
+    ArrayList<String> claimPrecVars = claimPrec.getVars();
+    ArrayList<String> z = claimPrec.getSubs(claimPrecVars, hypPrec);
+    if (z == null) {
+      return false;
+    }
+    z.removeIf(claimPrecVars::contains);
+
+    // Determine y as in rule
+    ArrayList<String> y = hypPrec.getSubs(z, claimPrec);
+    if (y == null) {
+      return false;
+    }
+
+    // TODO Ensure y and z disjoint. May require refining ICondition.
+
+    return claimProg.equals(hypProg) &&
+               claimPostc.equals(hypPostc.subs(y,z)) &&
+               z.stream().noneMatch(claimProg.getVars()::contains) &&
+               y.stream().noneMatch(claimProg.getVars()::contains) &&
+               claimPostc.getBTs().stream().noneMatch(z::contains) &&
+               claimPostc.getETs().stream().noneMatch(z::contains) &&
+               claimPostc.getBTs().stream().noneMatch(y::contains) &&
+               claimPostc.getETs().stream().noneMatch(y::contains);
+  }),
+  Sub2((x) -> {
+  if(x.getChildren().length != 1) {
+    return false;
+  }
+  ICondition hypPrec = x.getChildren()[0].getClaim().getPreCondition();
+  ICondition hypPostc = x.getChildren()[0].getClaim().getPostCondition();
+  ICondition claimPrec = x.getClaim().getPreCondition();
+  ICondition claimPostc = x.getClaim().getPostCondition();
+  IProgram hypProg = x.getChildren()[0].getClaim().getProgram();
+  IProgram claimProg = x.getClaim().getProgram();
+
+  // Determine z as in rule
+  ArrayList<String> claimPrecVars = claimPrec.getVars();
+  ArrayList<String> z = claimPrec.getSubs(claimPrecVars, hypPrec);
+  if (z == null) {
+    return false;
+  }
+  z.removeIf(claimPrecVars::contains);
+  // TODO Ensure y disjoint from vars(P), and also should prob be disjoint from vars(N) and vars(Q)
+
+
+  return claimProg.equals(hypProg) &&
+       claimPostc.equals(hypPostc) &&
+       z.stream().noneMatch(claimProg.getVars()::contains) && z.stream().noneMatch(claimPostc.getVars()::contains);
+});
 
 
   private Function<Proof, Boolean> validationFunction;
