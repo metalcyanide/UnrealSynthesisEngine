@@ -30,6 +30,7 @@ public interface IProgram {
 
   /*
    * Returns a list of the AST children of this node.
+   * Return null if non-terminal.
    */
   public IProgram[] getChildren();
 
