@@ -109,7 +109,68 @@ public enum ProofFactory{
    && prog.getNodeType().equals("Var")
    && prec.subs(e_new, e_old).and(new Condition(newAssignments)).existentialBind(e_new).isSubs(e_new, postc);
   }),
-  Plus((x) -> true),
+  Plus((x) -> {
+    if(x.getChildren().length != 2) {
+      return false;
+    }
+    ICondition lHypPrec = x.getChildren()[0].getClaim().getPreCondition();
+    ICondition lHypPostc = x.getChildren()[0].getClaim().getPostCondition();
+    ICondition rHypPrec = x.getChildren()[1].getClaim().getPreCondition();
+    ICondition rHypPostc = x.getChildren()[1].getClaim().getPostCondition();
+    ICondition claimPrec = x.getClaim().getPreCondition();
+    ICondition claimPostc = x.getClaim().getPostCondition();
+    IProgram lHypProg = x.getChildren()[0].getClaim().getProgram();
+    IProgram rHypProg = x.getChildren()[1].getClaim().getProgram();
+    IProgram claimProg = x.getClaim().getProgram();
+
+    ArrayList<String> v = claimPrec.getVars();
+    ArrayList<String> v_1 = claimPrec.getFreshVars(v.size());
+    ArrayList<String> v_2 = claimPrec.getFreshVars(v.size());
+    // ArrayList<String> v_1p = claimPrec.getFreshVars(v.size());
+    // ArrayList<String> v_2p = claimPrec.getFreshVars(v.size());
+
+    // Get v_1 and v_2, checking precondition agreement
+    // Construct dummy lprec and rprec
+
+    String v1AssignmentsFake = join(joinTwo(v_1, v, "="), " ^ ");
+    String v2AssignmentsFake = join(joinTwo(v_2, v, "="), " ^ ");
+    v_1 = claimPrec.and(new Condition(v1AssignmentsFake)).getSubs(v_1, lHypPrec);
+    v_2 = claimPrec.and(new Condition(v2AssignmentsFake)).getSubs(v_2, rHypPrec);
+    if (v_1 == null || v_2 == null || v_1.stream().noneMatch(v_2::contains)) {  // Renamings should exist and be disjoint
+      return false;
+    }
+    String v1Assignments = join(joinTwo(v_1, v, "="), " ^ ");
+    String v2Assignments = join(joinTwo(v_2, v, "="), " ^ ");
+
+
+    // Check claimPostc
+    // Construct dummy claimPostc
+    ICondition dummyPostc = claimPrec.and(lHypPostc).and(rHypPostc).and(new Condition(v1Assignments)).and(new Condition(v2Assignments));
+    // Do internal b_t subs before continuing to build expression
+    ArrayList<String> e = claimPrec.getETs();
+    ArrayList<String> ePRenames = dummyPostc.getFreshVars(e.size());
+    dummyPostc = dummyPostc.subs(ePRenames, e);
+    // Set b = b1 ^ b2
+    ArrayList<String> e1 = lHypPostc.getETs();
+    ArrayList<String> e2 = rHypPostc.getETs();
+
+    String bAndClauses = join(joinTwo(e, joinTwo(e1, e2, "+"), "="), " ^ ");
+    dummyPostc = dummyPostc.and(new Condition(bAndClauses));
+    // Q1[v1'/v] and Q2[v2'/v] substitutions
+    ArrayList<String> v_1P = dummyPostc.getFreshVars(v.size());
+    ArrayList<String> v_2P = dummyPostc.getFreshVars(v.size());
+    dummyPostc = claimPrec.and(lHypPostc.subs(v_1P, v)).and(rHypPostc.subs(v_2P, v)).and(new Condition(v1Assignments)).and(new Condition(v2Assignments)).subs(ePRenames, e).and(new Condition(bAndClauses));
+    // Existential binds
+    dummyPostc = dummyPostc.existentialBind(ePRenames).existentialBind(v_1).existentialBind(v_2).existentialBind(v_1P).existentialBind(v_2P);
+
+    // Build list of new vars bc ArrayLists are not functional
+    ArrayList<String> newVars = ePRenames; newVars.addAll(v_1); newVars.addAll(v_2); newVars.addAll(v_1P); newVars.addAll(v_2P);
+
+    return claimProg.getNodeType().equals("Plus")  // Is child1 And child2
+               && claimProg.getChildren()[0].equals(lHypProg)
+               && claimProg.getChildren()[1].equals(rHypProg)
+               && dummyPostc.isSubs(newVars, claimPostc);
+  }),
   GrmDisj((x) -> true),
   Not((x) -> {
     if(x.getChildren().length != 1) {
@@ -129,7 +190,68 @@ public enum ProofFactory{
    && hypProg.equals(claimProg.getChildren()[0])
    && hypPostc.subs(b_new, b_old).and(new Condition(newAssignments)).existentialBind(b_new).isSubs(b_new, claimPostc);
   }),
-  Comp((x) -> true),
+  Comp((x) -> {
+    if(x.getChildren().length != 2) {
+      return false;
+    }
+    ICondition lHypPrec = x.getChildren()[0].getClaim().getPreCondition();
+    ICondition lHypPostc = x.getChildren()[0].getClaim().getPostCondition();
+    ICondition rHypPrec = x.getChildren()[1].getClaim().getPreCondition();
+    ICondition rHypPostc = x.getChildren()[1].getClaim().getPostCondition();
+    ICondition claimPrec = x.getClaim().getPreCondition();
+    ICondition claimPostc = x.getClaim().getPostCondition();
+    IProgram lHypProg = x.getChildren()[0].getClaim().getProgram();
+    IProgram rHypProg = x.getChildren()[1].getClaim().getProgram();
+    IProgram claimProg = x.getClaim().getProgram();
+
+    ArrayList<String> v = claimPrec.getVars();
+    ArrayList<String> v_1 = claimPrec.getFreshVars(v.size());
+    ArrayList<String> v_2 = claimPrec.getFreshVars(v.size());
+    // ArrayList<String> v_1p = claimPrec.getFreshVars(v.size());
+    // ArrayList<String> v_2p = claimPrec.getFreshVars(v.size());
+
+    // Get v_1 and v_2, checking precondition agreement
+    // Construct dummy lprec and rprec
+
+    String v1AssignmentsFake = join(joinTwo(v_1, v, "="), " ^ ");
+    String v2AssignmentsFake = join(joinTwo(v_2, v, "="), " ^ ");
+    v_1 = claimPrec.and(new Condition(v1AssignmentsFake)).getSubs(v_1, lHypPrec);
+    v_2 = claimPrec.and(new Condition(v2AssignmentsFake)).getSubs(v_2, rHypPrec);
+    if (v_1 == null || v_2 == null || v_1.stream().noneMatch(v_2::contains)) {  // Renamings should exist and be disjoint
+      return false;
+    }
+    String v1Assignments = join(joinTwo(v_1, v, "="), " ^ ");
+    String v2Assignments = join(joinTwo(v_2, v, "="), " ^ ");
+
+
+    // Check claimPostc
+    // Construct dummy claimPostc
+    ICondition dummyPostc = claimPrec.and(lHypPostc).and(rHypPostc).and(new Condition(v1Assignments)).and(new Condition(v2Assignments));
+    // Do internal b_t subs before continuing to build expression
+    ArrayList<String> b = claimPrec.getBTs();
+    ArrayList<String> bPRenames = dummyPostc.getFreshVars(b.size());
+    dummyPostc = dummyPostc.subs(bPRenames, b);
+    // Set b = b1 ^ b2
+    ArrayList<String> e1 = lHypPostc.getETs();
+    ArrayList<String> e2 = rHypPostc.getETs();
+
+    String bAndClauses = join(joinTwo(b, joinTwo(e1, e2, "<"), "="), " ^ ");
+    dummyPostc = dummyPostc.and(new Condition(bAndClauses));
+    // Q1[v1'/v] and Q2[v2'/v] substitutions
+    ArrayList<String> v_1P = dummyPostc.getFreshVars(v.size());
+    ArrayList<String> v_2P = dummyPostc.getFreshVars(v.size());
+    dummyPostc = claimPrec.and(lHypPostc.subs(v_1P, v)).and(rHypPostc.subs(v_2P, v)).and(new Condition(v1Assignments)).and(new Condition(v2Assignments)).subs(bPRenames, b).and(new Condition(bAndClauses));
+    // Existential binds
+    dummyPostc = dummyPostc.existentialBind(bPRenames).existentialBind(v_1).existentialBind(v_2).existentialBind(v_1P).existentialBind(v_2P);
+
+    // Build list of new vars bc ArrayLists are not functional
+    ArrayList<String> newVars = bPRenames; newVars.addAll(v_1); newVars.addAll(v_2); newVars.addAll(v_1P); newVars.addAll(v_2P);
+
+    return claimProg.getNodeType().equals("Less")  // Is child1 And child2
+               && claimProg.getChildren()[0].equals(lHypProg)
+               && claimProg.getChildren()[1].equals(rHypProg)
+               && dummyPostc.isSubs(newVars, claimPostc);
+  }),
   Inv((x) -> {
     if(x.getChildren().length != 0) {
       return false;
@@ -173,9 +295,9 @@ public enum ProofFactory{
     
     String v1AssignmentsFake = join(joinTwo(v_1, v, "="), " ^ ");
     String v2AssignmentsFake = join(joinTwo(v_2, v, "="), " ^ ");
-    v_1 = claimPrec.and(new Condition(v1AssignmentsFake)).getSubs(v_1, lHypPostc);
-    v_2 = claimPrec.and(new Condition(v2AssignmentsFake)).getSubs(v_2, rHypPostc);
-    if (v_1 == null || v_2 == null || !v_1.stream().anyMatch(v_2::contains)) {  // Renamings should exist and be disjoint
+    v_1 = claimPrec.and(new Condition(v1AssignmentsFake)).getSubs(v_1, lHypPrec);
+    v_2 = claimPrec.and(new Condition(v2AssignmentsFake)).getSubs(v_2, rHypPrec);
+    if (v_1 == null || v_2 == null || v_1.stream().noneMatch(v_2::contains)) {  // Renamings should exist and be disjoint
       return false;
     }
     String v1Assignments = join(joinTwo(v_1, v, "="), " ^ ");
