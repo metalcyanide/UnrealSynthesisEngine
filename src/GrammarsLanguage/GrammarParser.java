@@ -16,8 +16,10 @@ public class GrammarParser implements IGrammar {
     ArrayList<String> terminals = new ArrayList<String>(Arrays.asList("True", "False", "0", "1"));
     ArrayList<String> binaryOperators = new ArrayList<String>(Arrays.asList("+", "-", "*", "/", "^", "<", "==", "While"));
     ArrayList<String> condStatements = new ArrayList<String>(Arrays.asList("ITE"));
+
+    HashMap<String, Program[]> nonTerminalMap = new HashMap<String, Program[]>();
     
-    private HashMap<String, Program[]> nonTerminalMap = new HashMap<String, Program[]>();
+    
 
     private static GrammarParser instance = null;
     private GrammarParser() { }
@@ -46,50 +48,65 @@ public class GrammarParser implements IGrammar {
         //need to do these updates
         public void updateNodeValue(String value) {
             this.value = value;
-            this.nodeType = getNodeType(value);
+            this.nodeType = setNodeType(value);
         }
     
         Node(String value) {
             this.value = value;
-            this.nodeType = getNodeType(value);
+            this.nodeType = setNodeType(value);
             this.first = null;
             this.second = null;
             this.third = null;
         }
         Node(String value, Node first) {
             this.value = value;
-            this.nodeType = getNodeType(value);
+            this.nodeType = setNodeType(value);
             this.first = first;
             this.second = null;
             this.third = null;
         }
         Node(String value, Node first, Node second) {
             this.value = value;
-            this.nodeType = getNodeType(value);
+            this.nodeType = setNodeType(value);
             this.first = first;
             this.second = second;
             this.third = null;
         }
         Node(String value, Node first, Node second, Node third) {
             this.value = value;
-            this.nodeType = getNodeType(value);
+            this.nodeType = setNodeType(value);
             this.first = first;
             this.second = second;
             this.third = third;
         }
     }
 
-    private String getNodeType(String nodeValue) {
+    private String setNodeType(String nodeValue) {
+
+        HashMap<String, String> typeMap = new HashMap<String, String>();
+        typeMap.put("T", "True");
+        typeMap.put("F", "False");
+        typeMap.put("0", "0");
+        typeMap.put("1", "1");
+        typeMap.put("+", "Plus");
+        typeMap.put("-", "Minus");
+        typeMap.put("x", "Times");
+        typeMap.put("/", "Div");
+        typeMap.put("^", "And");
+        typeMap.put("<", "Less");
+        typeMap.put("==", "Equal");
+        typeMap.put("if then else", "ITE");
+        typeMap.put(":=", "Assign");
+        typeMap.put(";", "Seq");
+        typeMap.put("while do", "While");
 
         String nodeType = "";
-        if (terminals.contains(nodeValue)){
-            nodeType = "Terminal";
+
+        if(Character.isUpperCase(nodeValue.toCharArray()[0])) {
+            nodeType = "NonTerm";
         }
-        else if (binaryOperators.contains(nodeValue)) {
-            nodeType = "BinaryOP";
-        }
-        else if (condStatements.contains(nodeValue)){
-            nodeType = "TertiaryOP";
+        else {
+            nodeType = typeMap.get(nodeValue);
         }
 
         return nodeType;
@@ -99,9 +116,9 @@ public class GrammarParser implements IGrammar {
 
         String nonTerminal;
         ArrayList<Node> productionRules;
-        ArrayList<ArrayList<String>> nonTerminals;
+        ArrayList<String> nonTerminals;
 
-        public ParserObject(String nonTerminal, ArrayList<Node> productionRules, ArrayList<ArrayList<String>> nonTerminals) {
+        public ParserObject(String nonTerminal, ArrayList<Node> productionRules, ArrayList<String> nonTerminals) {
             this.nonTerminal = nonTerminal;
             this.productionRules = productionRules;
             this.nonTerminals = nonTerminals;
@@ -109,27 +126,27 @@ public class GrammarParser implements IGrammar {
     }
 
     public Node createNode(String[] ruleComponents) {
-        String nodeValue = ruleComponents[0];
+        String nodeValue = ruleComponents[0].strip();
         if (terminals.contains(nodeValue)){
             Node node = new Node(nodeValue);
             return node;
         }
         else if (binaryOperators.contains(nodeValue)) {
-            Node nodefirst = new Node(ruleComponents[1]);
-            Node nodesecond = new Node(ruleComponents[2]);
+            Node nodefirst = new Node(ruleComponents[1].strip());
+            Node nodesecond = new Node(ruleComponents[2].strip());
             Node node = new Node(nodeValue, nodefirst, nodesecond);
             return node;
         }
         else if (condStatements.contains(nodeValue)){
-            Node nodefirst = new Node(ruleComponents[1]);
-            Node nodesecond = new Node(ruleComponents[2]);
-            Node nodethird = new Node(ruleComponents[3]);
+            Node nodefirst = new Node(ruleComponents[1].strip());
+            Node nodesecond = new Node(ruleComponents[2].strip());
+            Node nodethird = new Node(ruleComponents[3].strip());
             Node node = new Node(nodeValue, nodefirst, nodesecond, nodethird);
             return node;
         }
 
         // need to handle exception
-        return new Node(" ");
+        return new Node(nodeValue);
     }
 
     // use this method to parse Grammar from a scanner
@@ -137,27 +154,35 @@ public class GrammarParser implements IGrammar {
     public ParserObject parseGrammarLine(String grammarLine) {
         // Get references for proof nodes that are required to prove this one
         String regexSplitRHSLHS = "::=";
+        String regexSplitProductionRules = ";;";
         String[] components = grammarLine.split(regexSplitRHSLHS);
-        String nonTerminal = components[0];
-        String productionRule = components[1];
-        String[] productionRuleCompoments = productionRule.split("|");
-        ArrayList<ArrayList<String>> nonTerminals = new ArrayList<>();
+        String nonTerminal = components[0].strip();
+        String productionRule = components[1].strip();
+        String[] productionRuleCompoments = productionRule.split(regexSplitProductionRules);
+        // System.out.println(Arrays.toString(productionRuleCompoments));
+        ArrayList<String> nonTerminals = new ArrayList<>();
         ArrayList<Node> nodes = new ArrayList<>();
+
         for (String rule : productionRuleCompoments){
-            String[] ruleComponents = rule.split(" ");
+            String[] ruleComponents = rule.strip().split( " ");
             Node node = createNode(ruleComponents);
             ArrayList<String> ruleCompList = new ArrayList<>(Arrays.asList(ruleComponents));
-            ruleCompList.remove(0);
             nodes.add(node);
-            nonTerminals.add(ruleCompList);
+            for (String component: ruleCompList){
+                // System.out.println(component);
+                if(Character.isLowerCase(component.toCharArray()[0])){
+                    nonTerminals.add(component);
+                }
+            }     
         } 
         
-        return new ParserObject(nonTerminal, nodes, nonTerminals);
+        ParserObject parsedInfo = new ParserObject(nonTerminal, nodes, nonTerminals);
+        return parsedInfo;
     }
 
-    public void updateMap(String t, Program[] children){
-        nonTerminalMap.put(t, children);
-    }
+    // public void updateMap(String t, Program[] children){
+    //     nonTerminalMap.put(t, children);
+    // }
 
     public IProgram[] getProductions(String t){
         return nonTerminalMap.get(t);
@@ -166,12 +191,13 @@ public class GrammarParser implements IGrammar {
     /*
     * Test method for proof parsing
     */
-    private static void main(String args[]) {
-        String grammarExample = "A := A + B | B - C | E \n B := T | F | C";
+    public static void main(String args[]) {
+        String grammarExample = "A ::= + x B ;; - B C ;; E";
+        // String grammarExample = "A ::= A + B | B - C | E \n B := T | F | C";
         GrammarParser.ParserObject parsedInfo = GrammarParser.getInstance().parseGrammarLine(grammarExample);
+        System.out.println(parsedInfo.productionRules.get(0));
         
     }
-  
    
 }
   

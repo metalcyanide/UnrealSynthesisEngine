@@ -13,7 +13,7 @@ import GrammarsLanguage.GrammarParser;
 public class Program implements IProgram {
     // Singleton class
     ArrayList<String> terminals = new ArrayList<String>(Arrays.asList("True", "False", "0", "1"));
-    ArrayList<String> binaryOperators = new ArrayList<String>(Arrays.asList("+", "-", "x", "/", "^", "<", "=="));
+    ArrayList<String> binaryOperators = new ArrayList<String>(Arrays.asList("+", "-", "*", "/", "^", "<", "=="));
     ArrayList<String> condStatements = new ArrayList<String>(Arrays.asList("ITE", "while"));
 
     private static Program instance = null;
@@ -27,11 +27,9 @@ public class Program implements IProgram {
     }
 
     private Program[] children; // Children of the Production Rule
-    private ArrayList<String> nonTerminals; // List of all non-terminals
+    private static ArrayList<String> nonTerminals; // List of all non-terminals
     private String nodeType;
     private GrammarParser.Node node;
-
-    
 
     /**
      * Generic constructor used in factories.
@@ -40,35 +38,35 @@ public class Program implements IProgram {
         this.node = node;
         this.children = children;
         this.nonTerminals = nonTerminals;
-        this.nodeType = node.nodeType;
-        this.nonTerminals = nonTerminals; 
+        this.nodeType = node.nodeType; 
     }
 
     private Program(GrammarParser.Node node, ArrayList<String> nonTerminals) {
         this.node = node;
+        this.children = null;
         this.nonTerminals = nonTerminals;
         this.nodeType = node.nodeType;
-        this.nonTerminals = nonTerminals; 
     }
 
     /**
     * Given a scanner with a string representation of a proof (single line), constructs a proof object describing said proof.
     * Should use the parse method of IULTriples. Haven't added contexts yet...
     */
-    public Program parseGrammar(Scanner readFrom) throws Exception {
+    public static IProgram parseGrammar(Scanner readFrom) throws Exception {
         IProgram parsedProof = null;
         //parses all grammar lines
         GrammarParser.ParserObject info = GrammarParser.getInstance().parseGrammarLine(readFrom.nextLine());
         Program[] children = new Program[info.productionRules.size()];
         for(int i = 0; i < info.productionRules.size(); i++) {
             GrammarParser.Node production = info.productionRules.get(i);
-            ArrayList<String> nonTerminals = info.nonTerminals.get(i);
-            children[i] = Program(production, nonTerminals);
+            ArrayList<String> nonTerminals = info.nonTerminals;
+            children[i] = new Program(production, nonTerminals);
         }
 
-        GrammarParser.Node root = new GrammarParser.Node(info.nonTerminal);
+        GrammarParser.Node root = GrammarParser.getInstance().new Node(info.nonTerminal);
         // GrammarParser.updateMap(info.nonTerminal, children);
-        return Program(root, children, nonTerminals);
+        parsedProof = new Program(root, children, nonTerminals);
+        return parsedProof;
     }
 
     public String getNodeType(){
@@ -108,9 +106,19 @@ public class Program implements IProgram {
     /*
     * Test method for proof parsing
     */
-    private static void main(String args[]) {
-        String grammarExample = "A := A + B | B - C | E \n B := T | F | C";
-    //   ParseObject parsedInfo = GrammarParser.getInstance().parseGrammarLines(grammarExample);
+    public static void main(String args[]) throws Exception{
+        String grammarExample = "A ::= + x B ;; - B C ;; b := 1 ;; E";
+        // ParseObject parsedInfo = GrammarParser.getInstance().parseGrammarLines(grammarExample);
+        IProgram parsedInfo = parseGrammar(new Scanner(grammarExample));
+        for (IProgram child : parsedInfo.getChildren()) {
+            System.out.println(child.getVarName());
+            System.out.println(child.getNodeType());
+            System.out.println(child.getVars());
+            if (child.getChildren() != null){
+                System.out.println(child.getChildren().length);
+            }
+        }
+        
         
     }
     
