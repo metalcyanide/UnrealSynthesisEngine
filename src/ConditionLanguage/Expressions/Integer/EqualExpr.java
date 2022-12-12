@@ -2,6 +2,7 @@ package ConditionLanguage.Expressions.Integer;
 
 import ConditionLanguage.Expressions.Expr;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class EqualExpr extends Expr {
@@ -48,6 +49,26 @@ public class EqualExpr extends Expr {
         for(Expr child : children) {
             child.existVar(varName);
         }
+    }
+
+    @Override
+    public ArrayList<String> getEtVars() {
+        ArrayList<String> toReturn = new ArrayList<>();
+        for(Expr child : children) {
+            toReturn.addAll(child.getEtVars());
+        }
+
+        return toReturn;
+    }
+
+    @Override
+    public ArrayList<String> getBtVars() {
+        ArrayList<String> toReturn = new ArrayList<>();
+        for(Expr child : children) {
+            toReturn.addAll(child.getBtVars());
+        }
+
+        return toReturn;
     }
 
     @Override

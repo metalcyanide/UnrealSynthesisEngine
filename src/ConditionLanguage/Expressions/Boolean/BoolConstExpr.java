@@ -2,6 +2,8 @@ package ConditionLanguage.Expressions.Boolean;
 
 import ConditionLanguage.Expressions.Expr;
 
+import java.util.ArrayList;
+
 public class BoolConstExpr extends Expr {
     private final boolean value;
 
@@ -34,6 +36,16 @@ public class BoolConstExpr extends Expr {
     public void existVar(String varName) {
         // do nothing
         return;
+    }
+
+    @Override
+    public ArrayList<String> getEtVars() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public ArrayList<String> getBtVars() {
+        return new ArrayList<>();
     }
 
     @Override

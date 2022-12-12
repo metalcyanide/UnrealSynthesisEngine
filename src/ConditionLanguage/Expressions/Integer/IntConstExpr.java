@@ -2,6 +2,8 @@ package ConditionLanguage.Expressions.Integer;
 
 import ConditionLanguage.Expressions.Expr;
 
+import java.util.ArrayList;
+
 
 public class IntConstExpr extends Expr {
     private final int value;
@@ -42,6 +44,16 @@ public class IntConstExpr extends Expr {
     public void existVar(String varName) {
         // do nothing
         return;
+    }
+
+    @Override
+    public ArrayList<String> getEtVars() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public ArrayList<String> getBtVars() {
+        return new ArrayList<>();
     }
 
     public int getValue() {

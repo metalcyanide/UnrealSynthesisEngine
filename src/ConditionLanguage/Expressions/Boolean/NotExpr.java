@@ -2,6 +2,8 @@ package ConditionLanguage.Expressions.Boolean;
 
 import ConditionLanguage.Expressions.Expr;
 
+import java.util.ArrayList;
+
 public class NotExpr extends Expr {
     private Expr child;
 
@@ -35,6 +37,16 @@ public class NotExpr extends Expr {
     @Override
     public void existVar(String varName) {
         child.existVar(varName);
+    }
+
+    @Override
+    public ArrayList<String> getEtVars() {
+        return child.getEtVars();
+    }
+
+    @Override
+    public ArrayList<String> getBtVars() {
+        return child.getBtVars();
     }
 
     @Override

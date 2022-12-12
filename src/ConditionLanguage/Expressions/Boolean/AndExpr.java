@@ -2,6 +2,7 @@ package ConditionLanguage.Expressions.Boolean;
 
 import ConditionLanguage.Expressions.Expr;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,6 +51,26 @@ public class AndExpr extends Expr {
         for(Expr child : children) {
             child.existVar(varName);
         }
+    }
+
+    @Override
+    public ArrayList<String> getEtVars() {
+        ArrayList<String> toReturn = new ArrayList<>();
+        for(Expr child : children) {
+            toReturn.addAll(child.getEtVars());
+        }
+
+        return toReturn;
+    }
+
+    @Override
+    public ArrayList<String> getBtVars() {
+        ArrayList<String> toReturn = new ArrayList<>();
+        for(Expr child : children) {
+            toReturn.addAll(child.getBtVars());
+        }
+
+        return toReturn;
     }
 
     @Override

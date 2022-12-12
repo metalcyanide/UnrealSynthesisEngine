@@ -183,14 +183,18 @@ public class Condition implements ICondition{
     return new Condition(newRoot, "(And " + this.condition + " " + ((Condition) b).condition + ")");
   }
 
+  /*
+   * Note: when creating conditions, e_t must be defined with @ before, i.e. @e1
+   */
   public ArrayList<String> getETs() {
-    // TODO Implement this
-    return new ArrayList<String>();
+    return this.root.getEtVars();
   }
 
+  /*
+   * Note: when creating conditions, b_t must be defined with # before, i.e. #b1
+   */
   public ArrayList<String> getBTs() {
-    // TODO Implement this
-    return new ArrayList<String>();
+    return this.root.getBtVars();
   }
   
   public ArrayList<String> getFreshVars(int n) {
@@ -211,16 +215,17 @@ public class Condition implements ICondition{
   }
   
   public ArrayList<String> getSubs(ArrayList<String> oldVars, ICondition oldCondition) {
-    // TODO Auto-generated method stub
+    // TODO
     return null;
   }
 
   public boolean isSubs(ArrayList<String> oldVars, ICondition oldCondition) {
+    // TODO
     return true;
   }
 
   public ArrayList<String> getVarsByName(String x) {
-    // TODO Auto-generated method stub
+    // TODO
     return null;
   }
 }

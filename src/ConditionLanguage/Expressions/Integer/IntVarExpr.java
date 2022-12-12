@@ -2,12 +2,16 @@ package ConditionLanguage.Expressions.Integer;
 
 import ConditionLanguage.Expressions.Expr;
 
+import java.util.ArrayList;
+
 public class IntVarExpr extends Expr {
     private String name;
     private final String PREFIX = "i$";
+    private boolean et = false;
 
     public IntVarExpr(String n) {
         this.name = PREFIX + n;
+        if(n.charAt(0) == '@') this.et = true;
     }
 
     @Override
@@ -39,6 +43,21 @@ public class IntVarExpr extends Expr {
     }
 
     @Override
+    public ArrayList<String> getEtVars() {
+        ArrayList<String> toReturn = new ArrayList<>();
+        if(this.et) {
+            toReturn.add(this.name.substring(PREFIX.length()));
+        }
+
+        return toReturn;
+    }
+
+    @Override
+    public ArrayList<String> getBtVars() {
+        return new ArrayList<>();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;
@@ -48,4 +67,6 @@ public class IntVarExpr extends Expr {
     public String getName() {
         return this.name;
     }
+
+    public boolean isEt() { return this.et; }
 }
