@@ -1,8 +1,10 @@
 package ConditionLanguage.Expressions.Integer;
 
+import ConditionLanguage.Expressions.Boolean.AndExpr;
 import ConditionLanguage.Expressions.Expr;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class PlusExpr extends Expr {
     private Expr[] children;
@@ -47,7 +49,11 @@ public class PlusExpr extends Expr {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;
-        return Arrays.equals(children, ((PlusExpr) o).children);
+
+        // check equality, independent of commutativity
+        List<Expr> thisChildren = Arrays.asList(this.children);
+        List<Expr> otherChildren = Arrays.asList(((PlusExpr) o).children);
+        return thisChildren.containsAll(otherChildren) && otherChildren.containsAll(thisChildren);
     }
 
     public Expr childAt(int i) {

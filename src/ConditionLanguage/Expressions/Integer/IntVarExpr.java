@@ -4,9 +4,10 @@ import ConditionLanguage.Expressions.Expr;
 
 public class IntVarExpr extends Expr {
     private String name;
+    private final String PREFIX = "i$";
 
     public IntVarExpr(String n) {
-        this.name = "$" + n;
+        this.name = PREFIX + n;
     }
 
     @Override
@@ -26,8 +27,8 @@ public class IntVarExpr extends Expr {
 
     @Override
     public void subVar(String oldVar, String newVar) {
-        if(this.name.equals(oldVar)) {
-            this.name = newVar;
+        if(this.name.equals(PREFIX + oldVar)) {
+            this.name = PREFIX + newVar;
         }
     }
 

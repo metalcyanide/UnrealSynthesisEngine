@@ -3,6 +3,7 @@ package ConditionLanguage.Expressions.Boolean;
 import ConditionLanguage.Expressions.Expr;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class OrExpr extends Expr {
     private Expr[] children;
@@ -47,7 +48,11 @@ public class OrExpr extends Expr {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;
-        return Arrays.equals(children, ((OrExpr) o).children);
+
+        // check equality, independent of commutativity
+        List<Expr> thisChildren = Arrays.asList(this.children);
+        List<Expr> otherChildren = Arrays.asList(((OrExpr) o).children);
+        return thisChildren.containsAll(otherChildren) && otherChildren.containsAll(thisChildren);
     }
 
     public Expr childAt(int i) {

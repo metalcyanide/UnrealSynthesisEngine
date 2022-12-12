@@ -31,7 +31,7 @@ public interface ICondition {
 
   /*
    * True if newCondition is syntactically equivalent (up to commutative and associative
-   * operations) to this condition with oldvars substitued. False else.
+   * operations) to this condition with oldvars substituted. False else.
    */
   boolean isSubs(ArrayList<String> oldVars, ICondition newCondition);
 

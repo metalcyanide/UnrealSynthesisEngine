@@ -20,7 +20,7 @@ public abstract class Expr {
         //Integer
         PLUS, MINUS, MULT, DIV, MOD,
         //Constants/Variables
-        ICONST, BCONST, IVAR
+        ICONST, BCONST, IVAR, BVAR
     }
 
     public abstract ExprKind getKind(); //used to check/cast generic Expr

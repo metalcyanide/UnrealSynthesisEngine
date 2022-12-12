@@ -47,7 +47,10 @@ public class EqualExpr extends Expr {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;
-        return Arrays.equals(children, ((EqualExpr) o).children);
+
+        // check equality, independent of commutativity
+        return Arrays.equals(children, ((EqualExpr) o).children)
+                || (children[0] == ((EqualExpr) o).children[1] && children[1] == ((EqualExpr) o).children[0]);
     }
 
     public Expr childAt(int i) {

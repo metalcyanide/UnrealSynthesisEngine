@@ -1,20 +1,19 @@
 package ConditionLanguage.Expressions.Boolean;
 
 import ConditionLanguage.Expressions.Expr;
+import ConditionLanguage.Expressions.Integer.IntVarExpr;
 
-public class NotExpr extends Expr {
-    private Expr child;
+public class BoolVarExpr extends Expr {
+    private String name;
+    private final String PREFIX = "b$";
 
-    public NotExpr(Expr toNegate) {
-        if(toNegate.getType() != ExprType.BOOL) {
-            throw new IllegalArgumentException("NOT received non-boolean argument: " + toNegate.toString());
-        }
-        this.child = toNegate;
+    public BoolVarExpr(String n) {
+        this.name = PREFIX + n;
     }
 
     @Override
     public Expr.ExprKind getKind() {
-        return ExprKind.NOT;
+        return ExprKind.BVAR;
     }
 
     @Override
@@ -24,22 +23,24 @@ public class NotExpr extends Expr {
 
     @Override
     public String toString() {
-        return "NotExpr";
+        return "BoolVar("+this.name+")";
     }
 
     @Override
     public void subVar(String oldVar, String newVar) {
-        child.subVar(oldVar, newVar);
+        if(this.name.equals(PREFIX + oldVar)) {
+            this.name = PREFIX + newVar;
+        }
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;
-        return this.getChild().equals(((NotExpr)o).getChild());
+        return this.getName().equals(((BoolVarExpr) o).getName());
     }
 
-    public Expr getChild() {
-        return this.child;
+    public String getName() {
+        return this.name;
     }
 }

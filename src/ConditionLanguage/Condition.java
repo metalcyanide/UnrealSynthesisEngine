@@ -102,6 +102,9 @@ public class Condition implements ICondition{
       case "INTVAR": {
         return new IntVarExpr(remaining);
       }
+      case "BOOLVAR": {
+        return new BoolVarExpr(remaining);
+      }
       case "NOT": {
         Expr child = parseConditionString(remaining);
         return new NotExpr(child);
@@ -182,20 +185,10 @@ public class Condition implements ICondition{
     return new ArrayList<String>();
   }
 
-  // public String getNextET() {
-  //   // TODO Implement this
-  //   return "fish";
-  // }
-
   public ArrayList<String> getBTs() {
     // TODO Implement this
     return new ArrayList<String>();
   }
-
-  // public String getNextBT() {
-  //   // TODO Implement this
-  //   return "fish";
-  // }
   
   public ArrayList<String> getFreshVars(int n) {
     // TODO Implement this
@@ -219,7 +212,6 @@ public class Condition implements ICondition{
   }
 
   public boolean isSubs(ArrayList<String> oldVars, ICondition oldCondition) {
-    // TODO Auto-generated method stub
     return true;
   }
 
