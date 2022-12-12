@@ -31,6 +31,12 @@ public class BoolConstExpr extends Expr {
     }
 
     @Override
+    public void existVar(String varName) {
+        // do nothing
+        return;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;

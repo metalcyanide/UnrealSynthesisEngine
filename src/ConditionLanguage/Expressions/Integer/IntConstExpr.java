@@ -38,6 +38,12 @@ public class IntConstExpr extends Expr {
         return;
     }
 
+    @Override
+    public void existVar(String varName) {
+        // do nothing
+        return;
+    }
+
     public int getValue() {
         return this.value;
     }

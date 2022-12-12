@@ -45,6 +45,13 @@ public class OrExpr extends Expr {
     }
 
     @Override
+    public void existVar(String varName) {
+        for(Expr child : children) {
+            child.existVar(varName);
+        }
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;

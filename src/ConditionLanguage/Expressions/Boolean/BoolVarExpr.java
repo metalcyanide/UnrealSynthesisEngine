@@ -6,6 +6,7 @@ import ConditionLanguage.Expressions.Integer.IntVarExpr;
 public class BoolVarExpr extends Expr {
     private String name;
     private final String PREFIX = "b$";
+    private boolean existential = false;
 
     public BoolVarExpr(String n) {
         this.name = PREFIX + n;
@@ -34,6 +35,13 @@ public class BoolVarExpr extends Expr {
     }
 
     @Override
+    public void existVar(String varName) {
+        if(this.name.equals(PREFIX + varName)) {
+            this.existential = true;
+        }
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;
@@ -43,4 +51,6 @@ public class BoolVarExpr extends Expr {
     public String getName() {
         return this.name;
     }
+
+    public boolean isExistential() { return this.existential; }
 }

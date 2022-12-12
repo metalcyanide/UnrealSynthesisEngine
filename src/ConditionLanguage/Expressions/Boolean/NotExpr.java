@@ -33,6 +33,11 @@ public class NotExpr extends Expr {
     }
 
     @Override
+    public void existVar(String varName) {
+        child.existVar(varName);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;

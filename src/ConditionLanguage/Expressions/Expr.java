@@ -28,6 +28,7 @@ public abstract class Expr {
     public abstract String toString();
 
     public abstract void subVar(String oldVar, String newVar);
+    public abstract void existVar(String varName);
 
     //TODO converter to z3
 //    public abstract String toSMT(); //converts AST into a z3 query

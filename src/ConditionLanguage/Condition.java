@@ -154,7 +154,7 @@ public class Condition implements ICondition{
   }
 
   public String toString() {
-    return condition; //todo possibly replace with pretty print in expr?
+    return condition;
   }
 
   public Condition subs(ArrayList<String> newVar, ArrayList<String> oldVar) {
@@ -171,7 +171,10 @@ public class Condition implements ICondition{
   }
 
   public Condition existentialBind(ArrayList<String> newVar) {
-    // TODO Implement this
+    for(String newVarName : newVar) {
+      this.root.existVar(newVarName);
+    }
+    // note: method edits current condition, rather than returning functional new one
     return this;
   }
 
@@ -200,10 +203,11 @@ public class Condition implements ICondition{
     return new ArrayList<String>();
   }
 
-  // TODO fill in everything then have this be equivalence, perhaps? Or syntactic equality up to commutative/ associative ops
   @Override
   public boolean equals(Object c){
-    return true;
+    if (this == c) return true;
+    if (c == null || c.getClass() != getClass()) return false;
+    return this.root.equals(((Condition)c).root);
   }
   
   public ArrayList<String> getSubs(ArrayList<String> oldVars, ICondition oldCondition) {
