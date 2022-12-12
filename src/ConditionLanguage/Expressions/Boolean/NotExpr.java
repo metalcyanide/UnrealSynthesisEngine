@@ -28,6 +28,11 @@ public class NotExpr extends Expr {
     }
 
     @Override
+    public void subVar(String oldVar, String newVar) {
+        child.subVar(oldVar, newVar);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;

@@ -3,7 +3,7 @@ package ConditionLanguage.Expressions.Integer;
 import ConditionLanguage.Expressions.Expr;
 
 public class IntVarExpr extends Expr {
-    private final String name;
+    private String name;
 
     public IntVarExpr(String n) {
         this.name = "$" + n;
@@ -22,6 +22,13 @@ public class IntVarExpr extends Expr {
     @Override
     public String toString() {
         return "IntVar("+this.name+")";
+    }
+
+    @Override
+    public void subVar(String oldVar, String newVar) {
+        if(this.name.equals(oldVar)) {
+            this.name = newVar;
+        }
     }
 
     @Override

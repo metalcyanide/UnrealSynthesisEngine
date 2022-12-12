@@ -32,6 +32,12 @@ public class IntConstExpr extends Expr {
         return this.getValue() == ((IntConstExpr)o).getValue();
     }
 
+    @Override
+    public void subVar(String oldVar, String newVar) {
+        // do nothing
+        return;
+    }
+
     public int getValue() {
         return this.value;
     }

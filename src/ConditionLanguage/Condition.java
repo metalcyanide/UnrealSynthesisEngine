@@ -155,7 +155,15 @@ public class Condition implements ICondition{
   }
 
   public Condition subs(ArrayList<String> newVar, ArrayList<String> oldVar) {
-    // TODO Implement this
+    // assumes lists are same size
+    if(newVar.size() != oldVar.size()) {
+      throw new IllegalArgumentException("length of lists inputted to Condition.subs() not same length");
+    }
+
+    for(int i = 0; i < newVar.size(); i++) {
+      this.root.subVar(newVar.get(i), oldVar.get(i));
+    }
+    // note: method edits current condition, rather than returning functional new one
     return this;
   }
 

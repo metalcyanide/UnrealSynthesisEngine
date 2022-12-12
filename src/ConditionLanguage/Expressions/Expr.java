@@ -26,6 +26,9 @@ public abstract class Expr {
     public abstract ExprKind getKind(); //used to check/cast generic Expr
     public abstract ExprType getType(); //used to type check arguments
     public abstract String toString();
+
+    public abstract void subVar(String oldVar, String newVar);
+
     //TODO converter to z3
 //    public abstract String toSMT(); //converts AST into a z3 query
     //TODO pretty print?
