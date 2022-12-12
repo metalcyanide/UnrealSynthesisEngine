@@ -35,6 +35,7 @@ public abstract class Expr {
     public abstract void existVar(String varName);
     public abstract ArrayList<String> getEtVars();
     public abstract ArrayList<String> getBtVars();
+    public abstract ArrayList<String> getVars();
 
     //TODO converter to z3
 //    public abstract String toSMT(); //converts AST into a z3 query

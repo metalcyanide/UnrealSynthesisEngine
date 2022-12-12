@@ -48,11 +48,19 @@ public class IntConstExpr extends Expr {
 
     @Override
     public ArrayList<String> getEtVars() {
+        // empty
         return new ArrayList<>();
     }
 
     @Override
     public ArrayList<String> getBtVars() {
+        // empty
+        return new ArrayList<>();
+    }
+
+    @Override
+    public ArrayList<String> getVars() {
+        // empty
         return new ArrayList<>();
     }
 

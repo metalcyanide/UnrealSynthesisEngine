@@ -74,6 +74,16 @@ public class PlusExpr extends Expr {
     }
 
     @Override
+    public ArrayList<String> getVars() {
+        ArrayList<String> toReturn = new ArrayList<>();
+        for(Expr child : children) {
+            toReturn.addAll(child.getVars());
+        }
+
+        return toReturn;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;

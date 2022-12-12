@@ -3,6 +3,7 @@ package ConditionLanguage.Expressions.Integer;
 import ConditionLanguage.Expressions.Expr;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class IntVarExpr extends Expr {
     private String name;
@@ -55,6 +56,11 @@ public class IntVarExpr extends Expr {
     @Override
     public ArrayList<String> getBtVars() {
         return new ArrayList<>();
+    }
+
+    @Override
+    public ArrayList<String> getVars() {
+        return new ArrayList<>(Collections.singleton(this.name.substring(PREFIX.length())));
     }
 
     @Override

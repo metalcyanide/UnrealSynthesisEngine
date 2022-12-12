@@ -64,6 +64,16 @@ public class AndExpr extends Expr {
     }
 
     @Override
+    public ArrayList<String> getVars() {
+        ArrayList<String> toReturn = new ArrayList<>();
+        for(Expr child : children) {
+            toReturn.addAll(child.getVars());
+        }
+
+        return toReturn;
+    }
+
+    @Override
     public ArrayList<String> getBtVars() {
         ArrayList<String> toReturn = new ArrayList<>();
         for(Expr child : children) {

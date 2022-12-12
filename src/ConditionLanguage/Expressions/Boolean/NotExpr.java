@@ -50,6 +50,11 @@ public class NotExpr extends Expr {
     }
 
     @Override
+    public ArrayList<String> getVars() {
+        return child.getVars();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;

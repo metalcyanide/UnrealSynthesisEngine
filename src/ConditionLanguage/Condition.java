@@ -14,6 +14,7 @@ public class Condition implements ICondition{
 
   private String condition;
   private Expr root;
+  private int count = 0;
 
   /*
    * Basic constructor.
@@ -198,13 +199,19 @@ public class Condition implements ICondition{
   }
   
   public ArrayList<String> getFreshVars(int n) {
-    // TODO Implement this
-    return new ArrayList<String>();
+    ArrayList<String> newVars = new ArrayList<>();
+    do {
+      String newVar = "fvar"+this.count++;
+      if(!this.getVars().contains(newVar)) {
+        newVars.add(newVar);
+      }
+    } while(newVars.size() < n);
+
+    return newVars;
   }
   
   public ArrayList<String> getVars() {
-    // TODO Implement this
-    return new ArrayList<String>();
+    return this.root.getVars();
   }
 
   @Override

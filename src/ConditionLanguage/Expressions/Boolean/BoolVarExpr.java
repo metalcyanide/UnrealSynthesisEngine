@@ -4,6 +4,7 @@ import ConditionLanguage.Expressions.Expr;
 import ConditionLanguage.Expressions.Integer.IntVarExpr;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class BoolVarExpr extends Expr {
     private String name;
@@ -56,6 +57,11 @@ public class BoolVarExpr extends Expr {
         if(this.bt) toReturn.add(this.name.substring(PREFIX.length()));
 
         return toReturn;
+    }
+
+    @Override
+    public ArrayList<String> getVars() {
+        return new ArrayList<>(Collections.singleton(this.name.substring(PREFIX.length())));
     }
 
     @Override
