@@ -5,6 +5,7 @@ import ConditionLanguage.Expressions.Expr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class EqualExpr extends Expr {
     private Expr[] children;
@@ -95,6 +96,13 @@ public class EqualExpr extends Expr {
         }
 
         return toReturn;
+    }
+
+    @Override
+    public String toSMT(HashMap<String, Integer> map) {
+        return children[0].toSMT(map) +
+                "==" +
+                children[1].toSMT(map);
     }
 
     @Override

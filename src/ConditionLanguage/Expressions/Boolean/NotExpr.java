@@ -3,6 +3,7 @@ package ConditionLanguage.Expressions.Boolean;
 import ConditionLanguage.Expressions.Expr;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class NotExpr extends Expr {
     private Expr child;
@@ -58,6 +59,11 @@ public class NotExpr extends Expr {
     public ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr) {
         if(!(expr instanceof NotExpr)) return null;
         return child.getSubs(oldVars, ((NotExpr) expr).child);
+    }
+
+    @Override
+    public String toSMT(HashMap<String, Integer> map) {
+        return "Not(" + child.toSMT(map) + ")";
     }
 
     @Override

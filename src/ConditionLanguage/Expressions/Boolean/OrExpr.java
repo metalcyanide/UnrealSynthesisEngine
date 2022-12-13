@@ -4,6 +4,7 @@ import ConditionLanguage.Expressions.Expr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class OrExpr extends Expr {
@@ -95,6 +96,18 @@ public class OrExpr extends Expr {
         }
 
         return toReturn;
+    }
+
+    @Override
+    public String toSMT(HashMap<String, Integer> map) {
+        StringBuilder result = new StringBuilder("Or(");
+        for(Expr child : children) {
+            result.append(child.toSMT(map));
+            result.append(",");
+        }
+
+        result.setCharAt(result.length()-1, ')');
+        return result.toString();
     }
 
     @Override

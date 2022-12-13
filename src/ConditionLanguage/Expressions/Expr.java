@@ -1,7 +1,7 @@
 package ConditionLanguage.Expressions;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 /*
  * Class to represent expressions for conditions.
@@ -38,8 +38,7 @@ public abstract class Expr {
     public abstract ArrayList<String> getVars();
     public abstract ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr);
 
-    //TODO converter to z3
-//    public abstract String toSMT(); //converts AST into a z3 query
+    public abstract String toSMT(HashMap<String, Integer> map); //converts AST into a z3 query
     //TODO pretty print?
 //    public abstract String prettyPrint(); //prints out entire AST
 }

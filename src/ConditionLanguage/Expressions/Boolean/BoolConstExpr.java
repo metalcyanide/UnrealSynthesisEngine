@@ -3,6 +3,7 @@ package ConditionLanguage.Expressions.Boolean;
 import ConditionLanguage.Expressions.Expr;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BoolConstExpr extends Expr {
     private final boolean value;
@@ -60,6 +61,12 @@ public class BoolConstExpr extends Expr {
     public ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr) {
         if(!(expr instanceof BoolConstExpr)) return null;
         return new ArrayList<>();
+    }
+
+    @Override
+    public String toSMT(HashMap<String, Integer> map) {
+        if(value) return "True";
+        else return "False";
     }
 
     @Override

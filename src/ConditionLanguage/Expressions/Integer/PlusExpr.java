@@ -5,6 +5,7 @@ import ConditionLanguage.Expressions.Expr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class PlusExpr extends Expr {
@@ -96,6 +97,18 @@ public class PlusExpr extends Expr {
         }
 
         return toReturn;
+    }
+
+    @Override
+    public String toSMT(HashMap<String, Integer> map) {
+        StringBuilder result = new StringBuilder("");
+        for(Expr child : children) {
+            result.append(child.toSMT(map));
+            result.append("+");
+        }
+
+        result.deleteCharAt(result.length()-1); //to remove extra "+" at end
+        return result.toString();
     }
 
     @Override

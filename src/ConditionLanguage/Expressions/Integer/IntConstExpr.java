@@ -3,6 +3,7 @@ package ConditionLanguage.Expressions.Integer;
 import ConditionLanguage.Expressions.Expr;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class IntConstExpr extends Expr {
@@ -62,6 +63,11 @@ public class IntConstExpr extends Expr {
     public ArrayList<String> getVars() {
         // empty
         return new ArrayList<>();
+    }
+
+    @Override
+    public String toSMT(HashMap<String, Integer> map) {
+        return value + "";
     }
 
     @Override

@@ -4,7 +4,10 @@ import ConditionLanguage.Expressions.Boolean.*;
 import ConditionLanguage.Expressions.Expr;
 import ConditionLanguage.Expressions.Integer.*;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 /*
@@ -21,8 +24,8 @@ public class Condition implements ICondition{
    */
   public Condition (String stuff) //throws Exception
   {
-//	  this(new Scanner(stuff)); //todo
     this.condition = stuff;
+    this.root = parseConditionString(stuff);
   }
   /*
     Given a buffer to read from, reads condition from sequence of chars and returns a condition object.
@@ -137,12 +140,36 @@ public class Condition implements ICondition{
 
   //TODO: interface with z3 (likely input IR of formula), return result query
   private boolean checkSmtQuery(Expr query) {
-//    String z3_query = query.toSMT();
-//    todo write z3_query to file
+    try {
+      // get z3 query
+      HashMap<String, Integer> varMaps = new HashMap<>(); // for initializing variables
+      String z3_query = query.toSMT(varMaps);
+
+      // write variable init to file
+      FileWriter fw = new FileWriter("smt_query.txt");
+      for(String var : varMaps.keySet()) {
+        if(varMaps.get(var) == 0) { // integer
+          fw.write(var + " = Int('" + var + "')");
+        } else if(varMaps.get(var) == 1) { // boolean
+          fw.write(var + " = Bool('" + var + "')");
+        } else {
+          throw new UnsupportedOperationException("unknown variable type for " + var);
+        }
+      }
+
+      // write smt query to file
+      fw.write(z3_query);
+      fw.close();
+
 //    todo execute python3 on file
 //    todo read in terminal result
 
-    return true;
+      return true; //todo change to query result
+
+    } catch (IOException e) {
+      e.printStackTrace();
+      throw new IllegalStateException("error with discharging SMT query, need z3 installed");
+    }
   }
 
   /*

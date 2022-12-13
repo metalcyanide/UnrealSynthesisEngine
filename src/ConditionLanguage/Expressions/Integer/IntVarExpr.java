@@ -5,6 +5,7 @@ import ConditionLanguage.Expressions.Expr;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class IntVarExpr extends Expr {
     private String name;
@@ -75,6 +76,13 @@ public class IntVarExpr extends Expr {
         }
 
         return toReturn;
+    }
+
+    @Override
+    public String toSMT(HashMap<String, Integer> map) {
+        map.put(PREFIX + this.name, 0);
+        // todo does this need to check for existential?
+        return PREFIX + this.name;
     }
 
     @Override
