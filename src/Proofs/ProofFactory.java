@@ -3,6 +3,7 @@ package Proofs;
 import Proofs.Claim.IClaim;
 import Proofs.Context.IContext;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,7 +36,7 @@ public enum ProofFactory{
     ArrayList<String> varsOld = hypPostc.getVarsByName(varOld);     // x
     ArrayList<String> varsNew = hypPostc.getFreshVars(varsOld.size()); // x'
     int i = 0;
-    String newAssignments = join(joinTwo(varsOld,e,"=")," ^ "); // x'
+    String newAssignments = join(joinTwo(varsOld,e,"="),"AND"); // x'
    return hypPrec.equals(claimPrec)
    && claimProg.getNodeType().equals("Assign")
    && hypProg.equals(claimProg.getChildren()[1])
@@ -65,8 +66,9 @@ public enum ProofFactory{
     IProgram prog = x.getClaim().getProgram();
     ArrayList<String> e_old = prec.getETs();    // e_t
     ArrayList<String> e_new = prec.getFreshVars(e_old.size());
+    ArrayList<String> zeroes = new ArrayList<>(Collections.nCopies(e_old.size(), "INTCONST(0)"));
    return x.getChildren().length == 0 
-    && prec.subs(e_new, e_old).and(new Condition(e_old.stream().reduce("", (a,b) -> a + " ^ " + b + "=0"))).existentialBind(e_new).isSubs(e_new, postc)
+    && prec.subs(e_new, e_old).and(new Condition(join(joinTwo(e_old, zeroes, "="), "AND"))).existentialBind(e_new).isSubs(e_new, postc)
     && prog.getNodeType().equals("0");
   }),
   One(x -> {
@@ -75,8 +77,9 @@ public enum ProofFactory{
     IProgram prog = x.getClaim().getProgram();
     ArrayList<String> e_old = prec.getETs();
     ArrayList<String> e_new = prec.getFreshVars(e_old.size());
+    ArrayList<String> ones = new ArrayList<>(Collections.nCopies(e_old.size(), "INTCONST(1)"));
    return x.getChildren().length == 0 
-    && prec.subs(e_new, e_old).and(new Condition(e_old.stream().reduce("", (a,b) -> a + " ^ " + b + "=1"))).existentialBind(e_new).isSubs(e_new, postc)
+    && prec.subs(e_new, e_old).and(new Condition(join(joinTwo(e_old, ones, "="), "AND"))).existentialBind(e_new).isSubs(e_new, postc)
     && prog.getNodeType().equals("1");
   }),
   True(x -> {
@@ -85,8 +88,9 @@ public enum ProofFactory{
     IProgram prog = x.getClaim().getProgram();
     ArrayList<String> b_old = prec.getBTs();
     ArrayList<String> b_new = prec.getFreshVars(b_old.size());
+    ArrayList<String> trues = new ArrayList<>(Collections.nCopies(b_old.size(), "T"));
    return x.getChildren().length == 0 
-    && prec.subs(b_new, b_old).and(new Condition(b_old.stream().reduce("", (a,b) -> a + " ^ " + b + "=t"))).existentialBind(b_new).isSubs(b_new, postc)
+    && prec.subs(b_new, b_old).and(new Condition(join(joinTwo(b_old, trues, "="), "AND"))).existentialBind(b_new).isSubs(b_new, postc)
     && prog.getNodeType().equals("True");
   }),
   False(x -> {
@@ -95,8 +99,9 @@ public enum ProofFactory{
     IProgram prog = x.getClaim().getProgram();
     ArrayList<String> b_old = prec.getBTs();
     ArrayList<String> b_new = prec.getFreshVars(b_old.size());
+    ArrayList<String> falses = new ArrayList<>(Collections.nCopies(b_old.size(), "F"));
    return x.getChildren().length == 0 
-   && prec.subs(b_new, b_old).and(new Condition(b_old.stream().reduce("", (a,b) -> a + " ^ " + b + "=f"))).existentialBind(b_new).isSubs(b_new, postc)
+   && prec.subs(b_new, b_old).and(new Condition(join(joinTwo(b_old, falses, "="),"AND"))).existentialBind(b_new).isSubs(b_new, postc)
    && prog.getNodeType().equals("False");
   }),
   Var((x) -> {
@@ -107,7 +112,7 @@ public enum ProofFactory{
     ArrayList<String> e_new = prec.getFreshVars(e_old.size());
     String var = prog.getVarName(); // check that prog is a var and get the string var value
     ArrayList<String> varsOld = prec.getVarsByName(var);     // x 
-    String newAssignments = join(joinTwo(e_old, varsOld, "="), " ^ ");
+    String newAssignments = join(joinTwo(e_old, varsOld, "="), "AND");
    return x.getChildren().length == 0 
    && prog.getNodeType().equals("Var")
    && prec.subs(e_new, e_old).and(new Condition(newAssignments)).existentialBind(e_new).isSubs(e_new, postc);
@@ -135,15 +140,15 @@ public enum ProofFactory{
     // Get v_1 and v_2, checking precondition agreement
     // Construct dummy lprec and rprec
 
-    String v1AssignmentsFake = join(joinTwo(v_1, v, "="), " ^ ");
-    String v2AssignmentsFake = join(joinTwo(v_2, v, "="), " ^ ");
+    String v1AssignmentsFake = join(joinTwo(v_1, v, "="), "AND");
+    String v2AssignmentsFake = join(joinTwo(v_2, v, "="), "AND");
     v_1 = claimPrec.and(new Condition(v1AssignmentsFake)).getSubs(v_1, lHypPrec);
     v_2 = claimPrec.and(new Condition(v2AssignmentsFake)).getSubs(v_2, rHypPrec);
     if (v_1 == null || v_2 == null || v_1.stream().noneMatch(v_2::contains)) {  // Renamings should exist and be disjoint
       return false;
     }
-    String v1Assignments = join(joinTwo(v_1, v, "="), " ^ ");
-    String v2Assignments = join(joinTwo(v_2, v, "="), " ^ ");
+    String v1Assignments = join(joinTwo(v_1, v, "="), "AND");
+    String v2Assignments = join(joinTwo(v_2, v, "="), "AND");
 
 
     // Check claimPostc
@@ -157,7 +162,7 @@ public enum ProofFactory{
     ArrayList<String> e1 = lHypPostc.getETs();
     ArrayList<String> e2 = rHypPostc.getETs();
 
-    String bAndClauses = join(joinTwo(e, joinTwo(e1, e2, "+"), "="), " ^ ");
+    String bAndClauses = join(joinTwo(e, joinTwo(e1, e2, "+"), "="), "AND");
     dummyPostc = dummyPostc.and(new Condition(bAndClauses));
     // Q1[v1'/v] and Q2[v2'/v] substitutions
     ArrayList<String> v_1P = dummyPostc.getFreshVars(v.size());
@@ -187,7 +192,7 @@ public enum ProofFactory{
     IProgram claimProg = x.getClaim().getProgram();
     ArrayList<String> b_old = hypPostc.getBTs();
     ArrayList<String> b_new = hypPostc.getFreshVars(b_old.size());
-    String newAssignments = join(joinTwo(b_old, b_new, "=!"), " ^ ");
+    String newAssignments = join(joinTwo(b_old, b_new, "=!"), "AND");
    return hypPrec.equals(claimPrec)
    && claimProg.getNodeType().equals("Not")
    && hypProg.equals(claimProg.getChildren()[0])
@@ -216,15 +221,15 @@ public enum ProofFactory{
     // Get v_1 and v_2, checking precondition agreement
     // Construct dummy lprec and rprec
 
-    String v1AssignmentsFake = join(joinTwo(v_1, v, "="), " ^ ");
-    String v2AssignmentsFake = join(joinTwo(v_2, v, "="), " ^ ");
+    String v1AssignmentsFake = join(joinTwo(v_1, v, "="), "AND");
+    String v2AssignmentsFake = join(joinTwo(v_2, v, "="), "AND");
     v_1 = claimPrec.and(new Condition(v1AssignmentsFake)).getSubs(v_1, lHypPrec);
     v_2 = claimPrec.and(new Condition(v2AssignmentsFake)).getSubs(v_2, rHypPrec);
     if (v_1 == null || v_2 == null || v_1.stream().noneMatch(v_2::contains)) {  // Renamings should exist and be disjoint
       return false;
     }
-    String v1Assignments = join(joinTwo(v_1, v, "="), " ^ ");
-    String v2Assignments = join(joinTwo(v_2, v, "="), " ^ ");
+    String v1Assignments = join(joinTwo(v_1, v, "="), "AND");
+    String v2Assignments = join(joinTwo(v_2, v, "="), "AND");
 
 
     // Check claimPostc
@@ -238,7 +243,7 @@ public enum ProofFactory{
     ArrayList<String> e1 = lHypPostc.getETs();
     ArrayList<String> e2 = rHypPostc.getETs();
 
-    String bAndClauses = join(joinTwo(b, joinTwo(e1, e2, "<"), "="), " ^ ");
+    String bAndClauses = join(joinTwo(b, joinTwo(e1, e2, "<"), "="), "AND");
     dummyPostc = dummyPostc.and(new Condition(bAndClauses));
     // Q1[v1'/v] and Q2[v2'/v] substitutions
     ArrayList<String> v_1P = dummyPostc.getFreshVars(v.size());
@@ -315,15 +320,15 @@ public enum ProofFactory{
     // Get v_1 and v_2, checking precondition agreement
     // Construct dummy lprec and rprec
     
-    String v1AssignmentsFake = join(joinTwo(v_1, v, "="), " ^ ");
-    String v2AssignmentsFake = join(joinTwo(v_2, v, "="), " ^ ");
+    String v1AssignmentsFake = join(joinTwo(v_1, v, "="), "AND");
+    String v2AssignmentsFake = join(joinTwo(v_2, v, "="), "AND");
     v_1 = claimPrec.and(new Condition(v1AssignmentsFake)).getSubs(v_1, lHypPrec);
     v_2 = claimPrec.and(new Condition(v2AssignmentsFake)).getSubs(v_2, rHypPrec);
     if (v_1 == null || v_2 == null || v_1.stream().noneMatch(v_2::contains)) {  // Renamings should exist and be disjoint
       return false;
     }
-    String v1Assignments = join(joinTwo(v_1, v, "="), " ^ ");
-    String v2Assignments = join(joinTwo(v_2, v, "="), " ^ ");
+    String v1Assignments = join(joinTwo(v_1, v, "="), "AND");
+    String v2Assignments = join(joinTwo(v_2, v, "="), "AND");
     
 
     // Check claimPostc
@@ -337,7 +342,7 @@ public enum ProofFactory{
     ArrayList<String> b1 = lHypPostc.getBTs();
     ArrayList<String> b2 = rHypPostc.getBTs();
     
-    String bAndClauses = join(joinTwo(b, joinTwo(b1, b2, "^"), "="), " ^ ");
+    String bAndClauses = join(joinTwo(b, joinTwo(b1, b2, "AND"), "="), "AND");
     dummyPostc = dummyPostc.and(new Condition(bAndClauses));
     // Q1[v1'/v] and Q2[v2'/v] substitutions 
     ArrayList<String> v_1P = dummyPostc.getFreshVars(v.size());
@@ -468,7 +473,7 @@ public enum ProofFactory{
   static private final ArrayList<String> joinTwo(ArrayList<String> first, ArrayList<String> second, String joiner) {
     ArrayList<String> newList = new ArrayList<String>();
     for (int i = 0; i < first.size(); ++i) {
-        newList.add(first.get(i) + joiner + second.get(i));
+        newList.add(joiner + "(" + first.get(i) + "," + second.get(i) + ")");
     }
     return newList;
   }
@@ -477,7 +482,7 @@ public enum ProofFactory{
    * Cats arraylist elems together with given joiner
    */
   static private final String join(ArrayList<String> arList, String joiner) {
-    return arList.stream().reduce("", (a, b) -> a + joiner + b);
+    return arList.stream().reduce("", (a, b) -> joiner + "( " + a + "," + b + ")");
   }
 
   /**
