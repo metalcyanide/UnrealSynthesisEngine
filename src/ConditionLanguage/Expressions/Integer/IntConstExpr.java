@@ -64,6 +64,12 @@ public class IntConstExpr extends Expr {
         return new ArrayList<>();
     }
 
+    @Override
+    public ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr) {
+        if(!(expr instanceof IntConstExpr)) return null;
+        return new ArrayList<>();
+    }
+
     public int getValue() {
         return this.value;
     }

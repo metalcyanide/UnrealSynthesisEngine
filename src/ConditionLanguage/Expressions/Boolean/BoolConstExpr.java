@@ -57,6 +57,12 @@ public class BoolConstExpr extends Expr {
     }
 
     @Override
+    public ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr) {
+        if(!(expr instanceof BoolConstExpr)) return null;
+        return new ArrayList<>();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;

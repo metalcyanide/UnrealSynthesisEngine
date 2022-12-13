@@ -36,6 +36,7 @@ public abstract class Expr {
     public abstract ArrayList<String> getEtVars();
     public abstract ArrayList<String> getBtVars();
     public abstract ArrayList<String> getVars();
+    public abstract ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr);
 
     //TODO converter to z3
 //    public abstract String toSMT(); //converts AST into a z3 query

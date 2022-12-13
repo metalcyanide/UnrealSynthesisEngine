@@ -13,7 +13,7 @@ public class BoolVarExpr extends Expr {
     private boolean bt = false;
 
     public BoolVarExpr(String n) {
-        this.name = PREFIX + n;
+        this.name = n;
         if(n.charAt(0) == '#') this.bt = true;
     }
 
@@ -29,19 +29,19 @@ public class BoolVarExpr extends Expr {
 
     @Override
     public String toString() {
-        return "BoolVar("+this.name+")";
+        return "BoolVar("+PREFIX + this.name+")";
     }
 
     @Override
     public void subVar(String oldVar, String newVar) {
-        if(this.name.equals(PREFIX + oldVar)) {
-            this.name = PREFIX + newVar;
+        if(this.name.equals(oldVar)) {
+            this.name = newVar;
         }
     }
 
     @Override
     public void existVar(String varName) {
-        if(this.name.equals(PREFIX + varName)) {
+        if(this.name.equals(varName)) {
             this.existential = true;
         }
     }
@@ -54,14 +54,27 @@ public class BoolVarExpr extends Expr {
     @Override
     public ArrayList<String> getBtVars() {
         ArrayList<String> toReturn = new ArrayList<>();
-        if(this.bt) toReturn.add(this.name.substring(PREFIX.length()));
+        if(this.bt) toReturn.add(this.name);
 
         return toReturn;
     }
 
     @Override
     public ArrayList<String> getVars() {
-        return new ArrayList<>(Collections.singleton(this.name.substring(PREFIX.length())));
+        return new ArrayList<>(Collections.singleton(this.name));
+    }
+
+    @Override
+    public ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr) {
+        if(!(expr instanceof BoolVarExpr)) return null;
+        BoolVarExpr newExpr = (BoolVarExpr) expr;
+
+        ArrayList<String> toReturn = new ArrayList<>();
+        if(oldVars.contains(this.name)) {
+            toReturn.add(newExpr.getName());
+        }
+
+        return toReturn;
     }
 
     @Override

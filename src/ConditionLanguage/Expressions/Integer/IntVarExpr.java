@@ -1,5 +1,6 @@
 package ConditionLanguage.Expressions.Integer;
 
+import ConditionLanguage.Expressions.Boolean.BoolVarExpr;
 import ConditionLanguage.Expressions.Expr;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public class IntVarExpr extends Expr {
     private boolean et = false;
 
     public IntVarExpr(String n) {
-        this.name = PREFIX + n;
+        this.name = n;
         if(n.charAt(0) == '@') this.et = true;
     }
 
@@ -27,13 +28,13 @@ public class IntVarExpr extends Expr {
 
     @Override
     public String toString() {
-        return "IntVar("+this.name+")";
+        return "IntVar("+PREFIX + this.name+")";
     }
 
     @Override
     public void subVar(String oldVar, String newVar) {
-        if(this.name.equals(PREFIX + oldVar)) {
-            this.name = PREFIX + newVar;
+        if(this.name.equals(oldVar)) {
+            this.name = newVar;
         }
     }
 
@@ -47,7 +48,7 @@ public class IntVarExpr extends Expr {
     public ArrayList<String> getEtVars() {
         ArrayList<String> toReturn = new ArrayList<>();
         if(this.et) {
-            toReturn.add(this.name.substring(PREFIX.length()));
+            toReturn.add(this.name);
         }
 
         return toReturn;
@@ -60,7 +61,20 @@ public class IntVarExpr extends Expr {
 
     @Override
     public ArrayList<String> getVars() {
-        return new ArrayList<>(Collections.singleton(this.name.substring(PREFIX.length())));
+        return new ArrayList<>(Collections.singleton(this.name));
+    }
+
+    @Override
+    public ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr) {
+        if(!(expr instanceof IntVarExpr)) return null;
+        IntVarExpr newExpr = (IntVarExpr) expr;
+
+        ArrayList<String> toReturn = new ArrayList<>();
+        if(oldVars.contains(this.name)) {
+            toReturn.add(newExpr.getName());
+        }
+
+        return toReturn;
     }
 
     @Override

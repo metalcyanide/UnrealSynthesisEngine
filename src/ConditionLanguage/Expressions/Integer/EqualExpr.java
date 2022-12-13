@@ -1,5 +1,6 @@
 package ConditionLanguage.Expressions.Integer;
 
+import ConditionLanguage.Expressions.Boolean.AndExpr;
 import ConditionLanguage.Expressions.Expr;
 
 import java.util.ArrayList;
@@ -76,6 +77,21 @@ public class EqualExpr extends Expr {
         ArrayList<String> toReturn = new ArrayList<>();
         for(Expr child : children) {
             toReturn.addAll(child.getVars());
+        }
+
+        return toReturn;
+    }
+
+    @Override
+    public ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr) {
+        if(! (expr instanceof EqualExpr)) return null;
+        if(((EqualExpr)expr).children.length != 2) return null;
+
+        ArrayList<String> toReturn = new ArrayList<>();
+        for(int i = 0; i < 2; i++) {
+            ArrayList<String> result = this.children[i].getSubs(oldVars, ((EqualExpr)expr).children[i]);
+            if(result == null) return null;
+            toReturn.addAll(result);
         }
 
         return toReturn;

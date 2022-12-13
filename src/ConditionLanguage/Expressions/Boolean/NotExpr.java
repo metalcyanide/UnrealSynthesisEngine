@@ -55,6 +55,12 @@ public class NotExpr extends Expr {
     }
 
     @Override
+    public ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr) {
+        if(!(expr instanceof NotExpr)) return null;
+        return child.getSubs(oldVars, ((NotExpr) expr).child);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;

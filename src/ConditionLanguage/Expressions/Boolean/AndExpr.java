@@ -84,6 +84,21 @@ public class AndExpr extends Expr {
     }
 
     @Override
+    public ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr) {
+        if(! (expr instanceof AndExpr)) return null;
+        if(((AndExpr)expr).children.length != this.children.length) return null;
+
+        ArrayList<String> toReturn = new ArrayList<>();
+        for(int i = 0; i < this.children.length; i++) {
+            ArrayList<String> result = this.children[i].getSubs(oldVars, ((AndExpr)expr).children[i]);
+            if(result == null) return null;
+            toReturn.addAll(result);
+        }
+
+        return toReturn;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;
@@ -92,7 +107,6 @@ public class AndExpr extends Expr {
         List<Expr> thisChildren = Arrays.asList(this.children);
         List<Expr> otherChildren = Arrays.asList(((AndExpr) o).children);
         return thisChildren.containsAll(otherChildren) && otherChildren.containsAll(thisChildren);
-
     }
 
     public Expr childAt(int i) {

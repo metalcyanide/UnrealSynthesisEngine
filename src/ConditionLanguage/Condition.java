@@ -221,14 +221,12 @@ public class Condition implements ICondition{
     return this.root.equals(((Condition)c).root);
   }
   
-  public ArrayList<String> getSubs(ArrayList<String> oldVars, ICondition oldCondition) {
-    // TODO
-    return null;
+  public ArrayList<String> getSubs(ArrayList<String> oldVars, ICondition newCondition) {
+    return this.root.getSubs(oldVars, ((Condition) newCondition).root);
   }
 
   public boolean isSubs(ArrayList<String> oldVars, ICondition oldCondition) {
-    // TODO
-    return true;
+    return this.getSubs(oldVars, oldCondition) != null;
   }
 
   public ArrayList<String> getVarsByName(String x) {
