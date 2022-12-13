@@ -69,11 +69,11 @@ public class ProofParser {
      */
     public static void main(String args[]) throws Exception {
 //        String proofExample = "[0] [1] --> [2] {} |- {|True|}{Statement}{|Q|}";
-        String proofExample = "[0] [1] --> Zero [2] {}{|True|}{Statement}{|Q|}";
+        String proofExample = "[0] [1] --> Zero [2] {} {|True|}{Statement}{|Q|}";
         ParserObject info = ProofParser.getInstance().parseProofLine(proofExample);
         System.out.println(info.claim);
 
-        Proof proof = Proof.parseProof(new Scanner(proofExample));
+        Proof proof = Proof.parseProofLine(new Scanner(proofExample));
         System.out.println(proof.getClaim());
     }
 }

@@ -29,15 +29,28 @@ public class Proof implements IProof {
     this.ruleName = rule;
   }
 
-  /**
-  * Given a scanner with a string representation of a proof (single line), constructs a proof object describing said proof.
-  * Should use the parse method of IULTriples. Haven't added contexts yet...
-  */
+    /**
+     * Parses an entire proof and returns the last line of
+     * the proof, which we assume to be the root.
+     */
   public static Proof parseProof(Scanner readFrom) throws Exception {
+      Proof root = Proof.parseProofLine(readFrom);
+      while(readFrom.hasNextLine()) {
+          root = Proof.parseProofLine(readFrom);
+      }
+
+      return root;
+  }
+
+  /**
+   * Given a scanner with a string representation of a proof (single line),
+   * constructs a proof object describing said proof.
+   * Should use the parse method of IULTriples. \todo Haven't added contexts yet...
+   */
+  public static Proof parseProofLine(Scanner readFrom) throws Exception {
     Proof parsedProof = null;
     //parses one proof line
     ProofParser.ParserObject info = ProofParser.getInstance().parseProofLine(readFrom.nextLine());
-    //TODO update to use nonempty context
     IClaim claim = new Claim(new Scanner(info.claim));
     Proof[] children = new Proof[info.references.size()];
     for(int i = 0; i < info.references.size(); i++) {
