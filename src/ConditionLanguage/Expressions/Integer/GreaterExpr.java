@@ -1,23 +1,22 @@
 package ConditionLanguage.Expressions.Integer;
 
-import ConditionLanguage.Expressions.Boolean.AndExpr;
 import ConditionLanguage.Expressions.Expr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class EqualExpr extends Expr {
+public class GreaterExpr extends Expr {
     private Expr[] children;
 
-    public EqualExpr(Expr... args) {
+    public GreaterExpr(Expr... args) {
         if(args.length != 2) {
-            throw new IllegalArgumentException("EQUAL needs exactly two arguments");
+            throw new IllegalArgumentException("GREATER needs exactly two arguments");
         }
 
         for(Expr arg : args) {
             if(arg.getType() != Expr.ExprType.INT) {
-                throw new IllegalArgumentException("EQUAL received non-integer argument: " + arg.toString());
+                throw new IllegalArgumentException("GREATER received non-integer argument: " + arg.toString());
             }
         }
 
@@ -25,18 +24,18 @@ public class EqualExpr extends Expr {
     }
 
     @Override
-    public Expr.ExprKind getKind() {
-        return Expr.ExprKind.EQ;
+    public ExprKind getKind() {
+        return Expr.ExprKind.GT;
     }
 
     @Override
-    public Expr.ExprType getType() {
+    public ExprType getType() {
         return Expr.ExprType.BOOL;
     }
 
     @Override
     public String toString() {
-        return "EqualExpr";
+        return "GreaterExpr";
     }
 
     @Override
@@ -85,12 +84,12 @@ public class EqualExpr extends Expr {
 
     @Override
     public ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr) {
-        if(! (expr instanceof EqualExpr)) return null;
-        if(((EqualExpr)expr).children.length != 2) return null;
+        if(! (expr instanceof GreaterExpr)) return null;
+        if(((GreaterExpr)expr).children.length != 2) return null;
 
         ArrayList<String> toReturn = new ArrayList<>();
         for(int i = 0; i < 2; i++) {
-            ArrayList<String> result = this.children[i].getSubs(oldVars, ((EqualExpr)expr).children[i]);
+            ArrayList<String> result = this.children[i].getSubs(oldVars, ((GreaterExpr)expr).children[i]);
             if(result == null) return null;
             toReturn.addAll(result);
         }
@@ -100,7 +99,7 @@ public class EqualExpr extends Expr {
 
     @Override
     public String toSMT(HashMap<String, Integer> map) {
-        return children[0].toSMT(map) + "==" + children[1].toSMT(map);
+        return children[0].toSMT(map) + ">" + children[1].toSMT(map);
     }
 
     @Override
@@ -108,12 +107,6 @@ public class EqualExpr extends Expr {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;
 
-        // check equality, independent of commutativity
-        return Arrays.equals(children, ((EqualExpr) o).children)
-                || (children[0] == ((EqualExpr) o).children[1] && children[1] == ((EqualExpr) o).children[0]);
-    }
-
-    public Expr childAt(int i) {
-        return this.children[i];
+        return Arrays.equals(children, ((GreaterExpr) o).children);
     }
 }

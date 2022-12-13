@@ -133,6 +133,11 @@ public class Condition implements ICondition{
         Expr child2 = parseConditionString(remaining.substring(term1+1));
         return new EqualExpr(child1, child2);
       }
+      case ">": {
+        Expr child1 = parseConditionString(remaining.substring(0, term1));
+        Expr child2 = parseConditionString(remaining.substring(term1+1));
+        return new GreaterExpr(child1, child2);
+      }
       default:
         throw new UnsupportedOperationException("Operation not supported: " + command);
     }
