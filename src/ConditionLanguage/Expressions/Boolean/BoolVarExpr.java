@@ -79,6 +79,14 @@ public class BoolVarExpr extends Expr {
     }
 
     @Override
+    public ArrayList<String> getVarsByName(String x) {
+        ArrayList<String> toReturn = new ArrayList<>();
+        if(this.name.startsWith(x)) toReturn.add(this.name);
+
+        return toReturn;
+    }
+
+    @Override
     public String toSMT(HashMap<String, Integer> map) {
         map.put(PREFIX + this.name, 1);
         // todo does this need to check for existential?

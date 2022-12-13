@@ -98,6 +98,16 @@ public class GreaterExpr extends Expr {
     }
 
     @Override
+    public ArrayList<String> getVarsByName(String x) {
+        ArrayList<String> toReturn = new ArrayList<>();
+        for(Expr child : children) {
+            toReturn.addAll(child.getVarsByName(x));
+        }
+
+        return toReturn;
+    }
+
+    @Override
     public String toSMT(HashMap<String, Integer> map) {
         return children[0].toSMT(map) + ">" + children[1].toSMT(map);
     }

@@ -66,6 +66,12 @@ public class IntConstExpr extends Expr {
     }
 
     @Override
+    public ArrayList<String> getVarsByName(String x) {
+        // empty
+        return new ArrayList<>();
+    }
+
+    @Override
     public String toSMT(HashMap<String, Integer> map) {
         return value + "";
     }

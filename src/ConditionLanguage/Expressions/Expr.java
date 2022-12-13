@@ -36,6 +36,7 @@ public abstract class Expr {
     public abstract ArrayList<String> getEtVars();
     public abstract ArrayList<String> getBtVars();
     public abstract ArrayList<String> getVars();
+    public abstract ArrayList<String> getVarsByName(String x);
     public abstract ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr);
 
     public abstract String toSMT(HashMap<String, Integer> map); //converts AST into a z3 query

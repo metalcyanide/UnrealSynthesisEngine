@@ -62,6 +62,11 @@ public class NotExpr extends Expr {
     }
 
     @Override
+    public ArrayList<String> getVarsByName(String x) {
+        return child.getVarsByName(x);
+    }
+
+    @Override
     public String toSMT(HashMap<String, Integer> map) {
         return "Not(" + child.toSMT(map) + ")";
     }

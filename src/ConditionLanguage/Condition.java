@@ -15,8 +15,8 @@ import java.util.Scanner;
  */
 public class Condition implements ICondition{
 
-  private String condition;
-  private Expr root;
+  private final String condition;
+  private final Expr root;
   private int count = 0;
 
   /*
@@ -35,8 +35,7 @@ public class Condition implements ICondition{
 
     // Read "{|"
     if (readFrom.findInLine(".").charAt(0) != '{' || readFrom.findInLine(".").charAt(0) !='|') {
-      // TODO We could make a parse exception class if we wanted.
-      throw new Exception("bad condtion");
+      throw new Exception("bad condtion"); // maybe make this a parse class?
     }
 
     // Extract condition string
@@ -143,7 +142,6 @@ public class Condition implements ICondition{
     }
   }
 
-  //TODO: interface with z3 (likely input IR of formula), return result query
   private boolean checkSmtQuery(Expr query) {
     try {
       // get z3 query
@@ -262,7 +260,6 @@ public class Condition implements ICondition{
   }
 
   public ArrayList<String> getVarsByName(String x) {
-    // TODO
-    return null;
+    return this.root.getVarsByName(x);
   }
 }
