@@ -112,12 +112,14 @@ public class Proof implements IProof {
    * Returns a bool telling you whether this proof is correct, according to the semantics of validationFunction.
    */
   public boolean validate() {
+    if(!this.validationFunction.apply(this)) return false;
     for (IProof proof: this.getChildren()) {
       if (!proof.validate()) {
           return false;
       }
     }
-    return this.validationFunction.apply(this);
+    //validation is correct
+    return true;
   }
 
 }
