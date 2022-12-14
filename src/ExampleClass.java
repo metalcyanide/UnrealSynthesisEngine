@@ -9,4 +9,8 @@ public class ExampleClass {
     String name = "Stolen from web";// Local variable inside method
     System.out.println("Welcome " + name + "!!!");
   }
+  public static void main(String[] args){
+    String name = "Stolen from web";// Local variable inside method
+    System.out.println("Welcome " + name + "!!!");
+  }
 }

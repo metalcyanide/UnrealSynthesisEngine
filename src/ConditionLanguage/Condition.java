@@ -4,8 +4,10 @@ import ConditionLanguage.Expressions.Boolean.*;
 import ConditionLanguage.Expressions.Expr;
 import ConditionLanguage.Expressions.Integer.*;
 
+import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -149,7 +151,8 @@ public class Condition implements ICondition{
       String z3_query = query.toSMT(varMaps);
 
       // write variable init to file
-      FileWriter fw = new FileWriter("smt_query.txt");
+      FileWriter fw = new FileWriter("smt_query.py");
+      fw.write("from z3 import * \n");
       for(String var : varMaps.keySet()) {
         if(varMaps.get(var) == 0) { // integer
           fw.write(var + " = Int('" + var + "')");
@@ -161,11 +164,28 @@ public class Condition implements ICondition{
       }
 
       // write smt query to file
-      fw.write(z3_query);
+      fw.write("constraints = " + z3_query);
+      fw.write("s = Solver()");
+      fw.write("s.add(constraints)");
+      fw.write("print(s.check())");
+      fw.write("print(s.model())");
       fw.close();
 
 //    todo execute python3 on file
 //    todo read in terminal result
+      String queryFilePath = "smt_query.py";
+      String[] cmd = new String[2];
+      cmd[0] = "/Users/chaithanyanaikmude/opt/miniforge3/bin/python";
+      cmd[1] = queryFilePath;
+
+      Runtime rt = Runtime.getRuntime();
+      Process pr = rt.exec(cmd);
+
+      BufferedReader bfr = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+      String line = "";
+      while((line = bfr.readLine()) != null) {
+          System.out.println(line);
+      }
 
       return true; //todo change to query result
 

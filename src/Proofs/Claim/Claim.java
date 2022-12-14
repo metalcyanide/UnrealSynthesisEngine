@@ -3,6 +3,7 @@ package Proofs.Claim;
 import ConditionLanguage.Condition;
 import ConditionLanguage.ICondition;
 import GrammarsLanguage.IProgram;
+import GrammarsLanguage.Program;
 import Proofs.Context.Context;
 import Proofs.Context.IContext;
 import java.util.Scanner;
