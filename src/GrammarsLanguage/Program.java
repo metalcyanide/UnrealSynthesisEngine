@@ -1,6 +1,5 @@
 package GrammarsLanguage;
 
-import com.sun.org.apache.xpath.internal.operations.String;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -106,12 +105,13 @@ public class Program implements IProgram {
         }
         while (true) {
             char n = readFrom.findInLine(".").charAt(0);
+            // System.out.println("Inside the loop");
             if (n == '}') {
                 break;
             }
             stmtString.append(n);
         }
-
+        System.out.println(stmtString.toString());
         GrammarParser.ParserObject info = GrammarParser.getInstance().parseStatementLine(stmtString.toString());
         Program[] children = new Program[info.productionRules.size()];
 

@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import ConditionLanguage.ICondition;
 import GrammarsLanguage.IProgram;
+import GrammarsLanguage.Program;
 
 /*
  * Dummy stand-in for context class. Should have some functionality... eventually.
@@ -39,7 +40,7 @@ public class Context implements IContext {
     // Extract context string
     while (!readFrom.hasNext("}.*")) {
       preconds.add(new Condition(readFrom));
-      progs.add(null);
+      progs.add(Program.parseStatement(readFrom));
       postconds.add(new Condition(readFrom));
       if (readFrom.hasNext("}")) {
         break;

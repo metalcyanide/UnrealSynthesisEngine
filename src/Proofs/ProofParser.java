@@ -70,7 +70,7 @@ public class ProofParser {
      */
     public static void main(String args[]) throws Exception {
 //        String proofExample = "[0] [1] --> [2] {} |- {|True|}{Statement}{|Q|}";
-        String proofExample = "[0] [1] --> Zero [2] {} {|(BOOLCONST T)|}{Statement}{|(BOOLCONST T)|}";
+        String proofExample = " --> Zero [2] {} {|(BOOLCONST T)|}{1}{|(BOOLCONST T)|}";
         ParserObject info = ProofParser.getInstance().parseProofLine(proofExample);
         System.out.println(info.claim);
 
