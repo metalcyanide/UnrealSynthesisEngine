@@ -37,7 +37,7 @@ public class Context implements IContext {
     }
 
     // Extract context string
-    while (!readFrom.hasNext("}")) {
+    while (!readFrom.hasNext("}.*")) {
       preconds.add(new Condition(readFrom));
       progs.add(null);
       postconds.add(new Condition(readFrom));
@@ -48,6 +48,7 @@ public class Context implements IContext {
         throw new Exception("context malformated");
       }
     }
+    readFrom.findInLine(".");
 
   }
 

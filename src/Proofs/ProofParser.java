@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import Proofs.Claim.IClaim;
+import java.util.regex.Pattern;
 
 public class ProofParser {
     // Singleton class
@@ -58,7 +59,7 @@ public class ProofParser {
 //        // Get triple, without any spaces
 //        String triple = scan.nextLine().replaceAll("\\s", "");
 
-        String claim = scan.nextLine().replaceAll("\\s", "");
+        String claim = scan.nextLine().replaceAll(Pattern.quote("\\s{"), "{");
 
         // Return parser info
         return new ParserObject(proofReferences, currReference, claim, proofType);
@@ -69,7 +70,7 @@ public class ProofParser {
      */
     public static void main(String args[]) throws Exception {
 //        String proofExample = "[0] [1] --> [2] {} |- {|True|}{Statement}{|Q|}";
-        String proofExample = "[0] [1] --> Zero [2] {} {|True|}{Statement}{|Q|}";
+        String proofExample = "[0] [1] --> Zero [2] {} {|(BOOLCONST T)|}{Statement}{|(BOOLCONST T)|}";
         ParserObject info = ProofParser.getInstance().parseProofLine(proofExample);
         System.out.println(info.claim);
 
