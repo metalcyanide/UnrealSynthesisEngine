@@ -117,6 +117,23 @@ public class Condition implements ICondition{
       case "AND": {
         Expr child1 = parseConditionString(remaining.substring(0, term1));
         Expr child2 = parseConditionString(remaining.substring(term1+1));
+
+        // hacky fix to empty conditions
+        if(child1 instanceof BoolConstExpr) {
+          if(((BoolConstExpr)child1).getValue()) {
+            return child2;
+          } else {
+            return new BoolConstExpr(false);
+          }
+        }
+        if(child2 instanceof BoolConstExpr) {
+          if(((BoolConstExpr)child2).getValue()) {
+            return child1;
+          } else {
+            return new BoolConstExpr(false);
+          }
+        }
+
         return new AndExpr(child1, child2);
       }
       case "OR": {
@@ -138,6 +155,9 @@ public class Condition implements ICondition{
         Expr child1 = parseConditionString(remaining.substring(0, term1));
         Expr child2 = parseConditionString(remaining.substring(term1+1));
         return new GreaterExpr(child1, child2);
+      }
+      case " ": {
+        return new BoolConstExpr(true);
       }
       default:
         throw new UnsupportedOperationException("Operation not supported: " + command);
