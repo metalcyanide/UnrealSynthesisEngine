@@ -8,7 +8,6 @@ public class Tester {
     public static void main(String[] args) throws Exception {
         String dir = "proof-files/";
 
-
         HashMap<String, Boolean> filesAndOutputs = new HashMap<>();
         filesAndOutputs.put(dir + "zero_true.txt", true);
 

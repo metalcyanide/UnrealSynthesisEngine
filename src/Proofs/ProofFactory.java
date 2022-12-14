@@ -535,7 +535,7 @@ public enum ProofFactory{
   static private final ArrayList<String> joinTwo(ArrayList<String> first, ArrayList<String> second, String joiner) {
     ArrayList<String> newList = new ArrayList<String>();
     for (int i = 0; i < first.size(); ++i) {
-        newList.add(joiner + "(" + first.get(i) + "," + second.get(i) + ")");
+        newList.add("(" + joiner + " " + first.get(i) + "," + second.get(i) + ")");
     }
     return newList;
   }
@@ -544,7 +544,7 @@ public enum ProofFactory{
    * Cats arraylist elems together with given joiner
    */
   static private final String join(ArrayList<String> arList, String joiner) {
-    return arList.stream().reduce("", (a, b) -> joiner + "( " + a + "," + b + ")");
+    return arList.stream().reduce("", (a, b) -> "( " + joiner + " " + a + "," + b + ")");
   }
 
   /**
