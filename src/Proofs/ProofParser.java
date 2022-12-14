@@ -59,7 +59,7 @@ public class ProofParser {
 //        // Get triple, without any spaces
 //        String triple = scan.nextLine().replaceAll("\\s", "");
 
-        String claim = scan.nextLine().replaceAll(Pattern.quote("\\s{"), "{");
+        String claim = scan.nextLine().replaceAll("\\s\\{", "{");
 
         // Return parser info
         return new ParserObject(proofReferences, currReference, claim, proofType);
