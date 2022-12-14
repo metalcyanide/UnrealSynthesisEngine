@@ -105,6 +105,9 @@ public class GrammarParser implements IGrammar {
         if(Character.isUpperCase(nodeValue.toCharArray()[0])) {
             nodeType = "NonTerm";
         }
+        else if(Character.isLowerCase(nodeValue.toCharArray()[0])) {
+            nodeType = "var";
+        }
         else {
             nodeType = typeMap.get(nodeValue);
         }
@@ -158,23 +161,96 @@ public class GrammarParser implements IGrammar {
         String[] components = grammarLine.split(regexSplitRHSLHS);
         String nonTerminal = components[0].strip();
         String productionRule = components[1].strip();
-        String[] productionRuleCompoments = productionRule.split(regexSplitProductionRules);
+        String[] productionRuleComponents = productionRule.split(regexSplitProductionRules);
         // System.out.println(Arrays.toString(productionRuleCompoments));
         ArrayList<String> nonTerminals = new ArrayList<>();
         ArrayList<Node> nodes = new ArrayList<>();
 
-        for (String rule : productionRuleCompoments){
+        for (String rule : productionRuleComponents){
             String[] ruleComponents = rule.strip().split( " ");
             Node node = createNode(ruleComponents);
             ArrayList<String> ruleCompList = new ArrayList<>(Arrays.asList(ruleComponents));
             nodes.add(node);
             for (String component: ruleCompList){
                 // System.out.println(component);
-                if(Character.isLowerCase(component.toCharArray()[0])){
-                    nonTerminals.add(component);
+                if(Character.isUpperCase(component.toCharArray()[0])){
+                    if(!nonTerminals.contains(component)){
+                        nonTerminals.add(component);
+                    }
                 }
             }     
         } 
+        
+        ParserObject parsedInfo = new ParserObject(nonTerminal, nodes, nonTerminals);
+        return parsedInfo;
+    }
+
+    public GrammarParser.Node getNodeForStatement(String ruleLeft, String ruleRight, 
+                                ArrayList<String> nonTerminals){
+        String[] ruleLeftComponents = ruleLeft.strip().split( " ");
+        Node nodeLeft = createNode(ruleLeftComponents);
+        ArrayList<String> ruleCompList = new ArrayList<>(Arrays.asList(ruleLeftComponents));
+        for (String component: ruleCompList){
+            if(Character.isUpperCase(component.toCharArray()[0])){
+                if(!nonTerminals.contains(component)){
+                    nonTerminals.add(component);
+                }
+            }
+        }   
+
+        if (ruleRight == null) {
+            return nodeLeft;
+        }
+
+        String[] productionRuleComponents = ruleRight.strip().split(";", 2);
+
+        if(productionRuleComponents.length == 1) {
+            String[] ruleRightComponents = ruleLeft.strip().split( " ");
+            Node nodeRight = createNode(ruleRightComponents);
+            ruleCompList = new ArrayList<>(Arrays.asList(ruleLeftComponents));
+            for (String component: ruleCompList){
+                if(Character.isUpperCase(component.toCharArray()[0])){
+                    if(!nonTerminals.contains(component)){
+                        nonTerminals.add(component);
+                    }
+                }
+            }  
+            return new Node(";", nodeLeft, nodeRight);
+        }
+        else {
+            Node nodeRight = getNodeForStatement(productionRuleComponents[0], productionRuleComponents[1], nonTerminals);
+            return new Node(";", nodeLeft, nodeRight);
+        }
+    }
+
+    public ParserObject parseStatementLine(String statementLine) {
+        // Get references for proof nodes that are required to prove this one
+        String regexSplitRHSLHS = ";";
+
+        String[] productionRuleComponents = statementLine.strip().split(regexSplitRHSLHS, 2);
+
+        ArrayList<String> nonTerminals = new ArrayList<>();
+        ArrayList<Node> nodes = new ArrayList<>();
+        String nonTerminal = ";";
+        if(productionRuleComponents.length == 2){
+        // for (String rule : productionRuleComponents){
+            // String[] ruleComponents = rule.strip().split( " ");
+            Node node = getNodeForStatement(productionRuleComponents[0], productionRuleComponents[1], nonTerminals);
+            // ArrayList<String> ruleCompList = new ArrayList<>(Arrays.asList(ruleComponents));
+            nodes.add(node.first);
+            nodes.add(node.second);
+            // for (String component: ruleCompList){
+            //     // System.out.println(component);
+            //     if(Character.isUpperCase(component.toCharArray()[0])){
+            //         nonTerminals.add(component);
+            //     }
+            // }    
+        // } 
+        }
+        else {
+            Node node = getNodeForStatement(productionRuleComponents[0], null, nonTerminals);
+            nodes.add(node);
+        }
         
         ParserObject parsedInfo = new ParserObject(nonTerminal, nodes, nonTerminals);
         return parsedInfo;

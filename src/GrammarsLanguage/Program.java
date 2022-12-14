@@ -30,6 +30,7 @@ public class Program implements IProgram {
     private static ArrayList<String> nonTerminals; // List of all non-terminals
     private String nodeType;
     private GrammarParser.Node node;
+    public static HashMap<String, IProgram> mapPrograms = new HashMap<String, IProgram>();
 
     /**
      * Generic constructor used in factories.
@@ -53,7 +54,7 @@ public class Program implements IProgram {
     * Should use the parse method of IULTriples. Haven't added contexts yet...
     */
     public static IProgram parseGrammar(Scanner readFrom) throws Exception {
-        IProgram parsedProof = null;
+        IProgram parsedGrammarLine = null;
         //parses all grammar lines
         GrammarParser.ParserObject info = GrammarParser.getInstance().parseGrammarLine(readFrom.nextLine());
         Program[] children = new Program[info.productionRules.size()];
@@ -65,8 +66,50 @@ public class Program implements IProgram {
 
         GrammarParser.Node root = GrammarParser.getInstance().new Node(info.nonTerminal);
         // GrammarParser.updateMap(info.nonTerminal, children);
-        parsedProof = new Program(root, children, nonTerminals);
-        return parsedProof;
+        parsedGrammarLine = new Program(root, children, nonTerminals);
+        boolean checkKey = mapPrograms.containsKey(root.value);
+
+        if(checkKey == false){
+            mapPrograms.put(root.value, parsedGrammarLine);
+        }
+        return parsedGrammarLine;
+    }
+
+    public static Program getProgramForChild(GrammarParser.Node production, ArrayList<String> nonTerminals) {
+        Program[] children = new Program[2];
+        if(production.first == null ){
+            children[0] = null;
+            children[1] = null;
+            return new Program(production, children, nonTerminals);
+        }
+        else if(production.second == null) {
+            children[0] = new Program(production.first, nonTerminals);
+            children[1] = null;
+            return new Program(production, children, nonTerminals);
+        }
+        else if(production.second != null && production.second.first != null){
+            children[0] = new Program(production.first, nonTerminals);
+            children[1] = getProgramForChild(production.second, nonTerminals);
+            return new Program(production, children, nonTerminals);
+        }
+
+        return new Program(production, children, nonTerminals);
+    }
+
+    public static IProgram parseStatement(Scanner readFrom) throws Exception {
+        IProgram parsedStatement = null;
+        GrammarParser.ParserObject info = GrammarParser.getInstance().parseStatementLine(readFrom.nextLine());
+        Program[] children = new Program[info.productionRules.size()];
+        for(int i = 0; i < info.productionRules.size(); i++) {
+            GrammarParser.Node production = info.productionRules.get(i);
+            ArrayList<String> nonTerminals = info.nonTerminals;
+            children[i] = new Program(production, nonTerminals);
+        }
+
+        GrammarParser.Node root = GrammarParser.getInstance().new Node(info.nonTerminal);
+        parsedStatement = new Program(root, children, nonTerminals);
+
+        return parsedStatement;
     }
 
     public String getNodeType(){
@@ -84,6 +127,14 @@ public class Program implements IProgram {
     * If this node is a non-terminal, returns a list of rhs production rules as programs.
     */
     public IProgram[] getProductionRHS(){
+        boolean checkKey = mapPrograms.containsKey(node.value);
+
+        if(checkKey){
+            productions = mapPrograms.get(node.value).getChildren();
+        }
+        else {
+            productions = null;
+        }
         return productions;
     }
 
@@ -93,6 +144,12 @@ public class Program implements IProgram {
     * Else, returns null.
     */
     public String getVarName(){
+        if(node.nodeType == "var") {
+            return node.value;
+        }
+        else if(node.nodeType == "Assign") {
+            return this.children[0].getVarName();
+        }
         return node.value;
     }
 
@@ -108,8 +165,11 @@ public class Program implements IProgram {
     */
     public static void main(String args[]) throws Exception{
         String grammarExample = "A ::= + x B ;; - B C ;; b := 1 ;; E";
+        String statementExample = "+ x B ; := B C ; b := 1 ; E";
+
         // ParseObject parsedInfo = GrammarParser.getInstance().parseGrammarLines(grammarExample);
-        IProgram parsedInfo = parseGrammar(new Scanner(grammarExample));
+        IProgram parsedInfoGrammar = parseGrammar(new Scanner(grammarExample));
+        IProgram parsedInfo = parseStatement(new Scanner(statementExample));
         for (IProgram child : parsedInfo.getChildren()) {
             System.out.println(child.getVarName());
             System.out.println(child.getNodeType());
