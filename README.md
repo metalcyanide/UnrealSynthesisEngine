@@ -1,19 +1,14 @@
-# UnrealSynthesisEngine
-Proof synthesizer for Unrealizability Logic
+# UnrealSynthesisEngine (USE)
+Proof verifier for Unrealizability Logic
 
-## Current Todos:
-### Establish Input Languages
-- Choose language (and solver) for specifying conditions. [NRA & Z3 is one option.]
-- Choose language for encoding grammars.
-- Choose language for encoding proofs.
+# Tool
+## Building
+To build and use our tool, USE, you need the following software:
+- Instance of Z3 for Python
+- Java 1.12 or higher
 
-### Establish Necessary Program Constructs (& Their Interfaces)
-- Define proof class.
-- Define statement (\Gamma \proves {P} S {Q}, or just {P} S {Q} for now) class.
-- Define inference rules (perhaps as subtypes or string-semantic pairs).
-- Define class for conditions (P & Q).
-- Define class for grammar & non-terminals/incomplete programs. Also define what the useful info from these is. Probably hard and important.
-- Define relationship between incomplete programs and inference rules (e.g., in a visitor).
-
-### Build Main Verifier Logic
-- Bottom/Leaf-up proof parser, checking rules as we go? 
+## Running
+We have two options available to use our tool. The first is to run the `Program.java` class, 
+which allows one to specify their unrealizability proof as arguments to the main method.
+The second is to run our testing suite, which automatically collects and verifies the
+proofs against their expected outputs.
