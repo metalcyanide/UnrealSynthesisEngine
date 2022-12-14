@@ -1,5 +1,6 @@
 package ConditionLanguage.Expressions.Integer;
 
+import ConditionLanguage.Expressions.Boolean.BoolConstExpr;
 import ConditionLanguage.Expressions.Expr;
 
 import java.util.ArrayList;
@@ -79,6 +80,11 @@ public class IntConstExpr extends Expr {
     @Override
     public ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr) {
         if(!(expr instanceof IntConstExpr)) return null;
+
+        //check that they're both the same number
+        IntConstExpr otherExpr = (IntConstExpr) expr;
+        if(this.getValue() != otherExpr.getValue()) return null;
+
         return new ArrayList<>();
     }
 

@@ -215,7 +215,7 @@ public class GrammarParser implements IGrammar {
                     }
                 }
             }  
-            return new Node(";", nodeLeft, nodeRight);
+            return new Node(productionRuleComponents[0], nodeLeft, nodeRight);
         }
         else {
             Node nodeRight = getNodeForStatement(productionRuleComponents[0], productionRuleComponents[1], nonTerminals);
@@ -231,7 +231,7 @@ public class GrammarParser implements IGrammar {
 
         ArrayList<String> nonTerminals = new ArrayList<>();
         ArrayList<Node> nodes = new ArrayList<>();
-        String nonTerminal = ";";
+        String nonTerminal = productionRuleComponents[0];
         if(productionRuleComponents.length == 2){
         // for (String rule : productionRuleComponents){
             // String[] ruleComponents = rule.strip().split( " ");

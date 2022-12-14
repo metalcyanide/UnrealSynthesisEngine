@@ -66,6 +66,11 @@ public class BoolConstExpr extends Expr {
     @Override
     public ArrayList<String> getSubs(ArrayList<String> oldVars, Expr expr) {
         if(!(expr instanceof BoolConstExpr)) return null;
+
+        //check that they're both true or both false
+        BoolConstExpr otherExpr = (BoolConstExpr) expr;
+        if(this.getValue() != otherExpr.getValue()) return null;
+
         return new ArrayList<>();
     }
 

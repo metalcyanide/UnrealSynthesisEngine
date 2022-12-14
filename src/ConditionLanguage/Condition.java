@@ -15,7 +15,7 @@ import java.util.Scanner;
  */
 public class Condition implements ICondition{
 
-  private final String condition;
+  private String condition;
   private final Expr root;
   private int count = 0;
 
@@ -59,7 +59,8 @@ public class Condition implements ICondition{
    */
   private Condition(Expr newRoot, String newCondition) {
     this.condition = newCondition;
-    this.root = newRoot;
+    this.root = parseConditionString(newCondition);
+//    this.root = newRoot;
   }
 
   /*
@@ -86,6 +87,7 @@ public class Condition implements ICondition{
     int parenCount = 0;
     char[] remainArray = remaining.toCharArray();
     do {
+      if(remaining.length() == 0) break;
       if(remainArray[term1] == '(') parenCount++;
       if(remainArray[term1] == ')') parenCount--;
       term1++;
@@ -154,7 +156,7 @@ public class Condition implements ICondition{
         Expr child2 = parseConditionString(remaining.substring(term1+1));
         return new GreaterExpr(child1, child2);
       }
-      case " ": {
+      case "": {
         return new BoolConstExpr(true);
       }
       default:
@@ -274,7 +276,7 @@ public class Condition implements ICondition{
 
   public Condition and(ICondition b) {
     Expr newRoot = new AndExpr(this.root, ((Condition)b).root);
-    return new Condition(newRoot, "(And " + this.condition + " " + ((Condition) b).condition + ")");
+    return new Condition(newRoot, "(AND " + this.condition + " " + ((Condition) b).condition + ")");
   }
 
   /*
