@@ -543,8 +543,11 @@ public enum ProofFactory{
   /*
    * Cats arraylist elems together with given joiner
    */
-  static private final String join(ArrayList<String> arList, String joiner) {
-    return arList.stream().reduce("", (a, b) -> "( " + joiner + " " + a + "," + b + ")");
+  static private String join(ArrayList<String> arList, String joiner) {
+    if (arList.isEmpty()) {
+      return "( )";
+    }
+    return arList.subList(1,-1).stream().reduce("(" + arList.get(0) + ")", (a, b) -> "( " + joiner + " " + a + "," + b + ")");
   }
 
   /**

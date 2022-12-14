@@ -250,12 +250,12 @@ public class Condition implements ICondition{
   
   public ArrayList<String> getFreshVars(int n) {
     ArrayList<String> newVars = new ArrayList<>();
-    do {
+    while(newVars.size() < n) {
       String newVar = "fvar"+this.count++;
       if(!this.getVars().contains(newVar)) {
         newVars.add(newVar);
       }
-    } while(newVars.size() < n);
+    }
 
     return newVars;
   }
