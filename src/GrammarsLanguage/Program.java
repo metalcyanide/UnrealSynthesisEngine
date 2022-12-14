@@ -1,5 +1,6 @@
 package GrammarsLanguage;
 
+import com.sun.org.apache.xpath.internal.operations.String;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -97,14 +98,23 @@ public class Program implements IProgram {
     }
 
     public static IProgram parseStatement(Scanner readFrom) throws Exception {
+        StringBuilder stmtString = new StringBuilder();
         IProgram parsedStatement = null;
-        GrammarParser.ParserObject info = GrammarParser.getInstance().parseStatementLine(readFrom.nextLine());
+
+        if (readFrom.findInLine(".").charAt(0) != '{') {
+            throw new Exception("bad program");
+        }
+        while (true) {
+            char n = readFrom.findInLine(".").charAt(0);
+            if (n == '}') {
+                break;
+            }
+            stmtString.append(n);
+        }
+
+        GrammarParser.ParserObject info = GrammarParser.getInstance().parseStatementLine(stmtString.toString());
         Program[] children = new Program[info.productionRules.size()];
-        // for(int i = 0; i < info.productionRules.size(); i++) {
-        //     GrammarParser.Node production = info.productionRules.get(i);
-        //     ArrayList<String> nonTerminals = info.nonTerminals;
-        //     children[i] = new Program(production, nonTerminals);
-        // }
+
         if(info.productionRules.size() == 1) {
             children[0] = new Program(info.productionRules.get(0), nonTerminals);
         }
