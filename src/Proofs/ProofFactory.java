@@ -144,7 +144,7 @@ public enum ProofFactory{
     String v2AssignmentsFake = join(joinTwo(v_2, v, "="), "AND");
     v_1 = claimPrec.and(new Condition(v1AssignmentsFake)).getSubs(v_1, lHypPrec);
     v_2 = claimPrec.and(new Condition(v2AssignmentsFake)).getSubs(v_2, rHypPrec);
-    if (v_1 == null || v_2 == null || v_1.stream().noneMatch(v_2::contains)) {  // Renamings should exist and be disjoint
+    if (v_1 == null || v_2 == null || v_1.stream().anyMatch(v_2::contains)) {  // Renamings should exist and be disjoint
       return false;
     }
     String v1Assignments = join(joinTwo(v_1, v, "="), "AND");
@@ -225,7 +225,7 @@ public enum ProofFactory{
     String v2AssignmentsFake = join(joinTwo(v_2, v, "="), "AND");
     v_1 = claimPrec.and(new Condition(v1AssignmentsFake)).getSubs(v_1, lHypPrec);
     v_2 = claimPrec.and(new Condition(v2AssignmentsFake)).getSubs(v_2, rHypPrec);
-    if (v_1 == null || v_2 == null || v_1.stream().noneMatch(v_2::contains)) {  // Renamings should exist and be disjoint
+    if (v_1 == null || v_2 == null || v_1.stream().anyMatch(v_2::contains)) {  // Renamings should exist and be disjoint
       return false;
     }
     String v1Assignments = join(joinTwo(v_1, v, "="), "AND");
@@ -319,22 +319,21 @@ public enum ProofFactory{
 
     // Get v_1 and v_2, checking precondition agreement
     // Construct dummy lprec and rprec
-    
+
     String v1AssignmentsFake = join(joinTwo(v_1, v, "="), "AND");
     String v2AssignmentsFake = join(joinTwo(v_2, v, "="), "AND");
     v_1 = claimPrec.and(new Condition(v1AssignmentsFake)).getSubs(v_1, lHypPrec);
     v_2 = claimPrec.and(new Condition(v2AssignmentsFake)).getSubs(v_2, rHypPrec);
-    if (v_1 == null || v_2 == null || v_1.stream().noneMatch(v_2::contains)) {  // Renamings should exist and be disjoint
+    if (v_1 == null || v_2 == null || v_1.stream().anyMatch(v_2::contains)) {  // Renamings should exist and be disjoint
       return false;
     }
     String v1Assignments = join(joinTwo(v_1, v, "="), "AND");
     String v2Assignments = join(joinTwo(v_2, v, "="), "AND");
-    
 
     // Check claimPostc
     // Construct dummy claimPostc
     ICondition dummyPostc = claimPrec.and(lHypPostc).and(rHypPostc).and(new Condition(v1Assignments)).and(new Condition(v2Assignments));
-    // Do internal b_t subs before continuing to build expression 
+    // Do internal b_t subs before continuing to build expression
     ArrayList<String> b = claimPrec.getBTs();
     ArrayList<String> bPRenames = dummyPostc.getFreshVars(b.size());
     dummyPostc = dummyPostc.subs(bPRenames, b);
@@ -343,14 +342,15 @@ public enum ProofFactory{
     ArrayList<String> b2 = rHypPostc.getBTs();
     
     String bAndClauses = join(joinTwo(b, joinTwo(b1, b2, "AND"), "="), "AND");
+
     dummyPostc = dummyPostc.and(new Condition(bAndClauses));
-    // Q1[v1'/v] and Q2[v2'/v] substitutions 
+    // Q1[v1'/v] and Q2[v2'/v] substitutions
     ArrayList<String> v_1P = dummyPostc.getFreshVars(v.size());
     ArrayList<String> v_2P = dummyPostc.getFreshVars(v.size());
     dummyPostc = claimPrec.and(lHypPostc.subs(v_1P, v)).and(rHypPostc.subs(v_2P, v)).and(new Condition(v1Assignments)).and(new Condition(v2Assignments)).subs(bPRenames, b).and(new Condition(bAndClauses));
     // Existential binds
     dummyPostc = dummyPostc.existentialBind(bPRenames).existentialBind(v_1).existentialBind(v_2).existentialBind(v_1P).existentialBind(v_2P);
-    
+
     // Build list of new vars bc ArrayLists are not functional
     ArrayList<String> newVars = bPRenames; newVars.addAll(v_1); newVars.addAll(v_2); newVars.addAll(v_1P); newVars.addAll(v_2P);
 
@@ -359,7 +359,69 @@ public enum ProofFactory{
     && claimProg.getChildren()[1].equals(rHypProg)
     && dummyPostc.isSubs(newVars, claimPostc);
   }),
-  ITE((x) -> true),
+  ITE((x) -> { return true;
+//    if(x.getChildren().length != 3) {
+//      return false;
+//    }
+//    ICondition condHypPrec = x.getChildren()[0].getClaim().getPreCondition();
+//    ICondition condHypPostc = x.getChildren()[0].getClaim().getPostCondition();
+//    ICondition thenHypPrec = x.getChildren()[1].getClaim().getPreCondition();
+//    ICondition thenHypPostc = x.getChildren()[1].getClaim().getPostCondition();
+//    ICondition elseHypPrec = x.getChildren()[2].getClaim().getPreCondition();
+//    ICondition elseHypPostc = x.getChildren()[2].getClaim().getPostCondition();
+//    ICondition claimPrec = x.getClaim().getPreCondition();
+//    ICondition claimPostc = x.getClaim().getPostCondition();
+//    IProgram condHypProg = x.getChildren()[0].getClaim().getProgram();
+//    IProgram thenHypProg = x.getChildren()[1].getClaim().getProgram();
+//    IProgram elseHypProg = x.getChildren()[2].getClaim().getProgram();
+//    IProgram claimProg = x.getClaim().getProgram();
+//
+//    ArrayList<String> v = claimPrec.getVars();
+//    ArrayList<String> v_1 = condHypPostc.getFreshVars(v.size());
+//    ArrayList<String> v_2 = condHypPostc.getFreshVars(v.size());
+//
+//    // Get v_1 and v_2, checking cond postcondition agrees with then and else preconditions
+//    // Construct dummy lprec and rprec
+//
+//    String v1AssignmentsFake = join(joinTwo(v_1, v, "="), " ^ ");
+//    String v2AssignmentsFake = join(joinTwo(v_2, v, "="), " ^ ");
+//    v_1 = condHypPostc.and(new Condition(v1AssignmentsFake)).getSubs(v_1, thenHypPrec);
+//    v_2 = condHypPostc.and(new Condition(v2AssignmentsFake)).getSubs(v_2, elseHypPrec);
+//    if (v_1 == null || v_2 == null || v_1.stream().anyMatch(v_2::contains)) {  // Renamings should exist and be disjoint
+//      return false;
+//    }
+//    String v1Assignments = join(joinTwo(v_1, v, "="), " ^ ");
+//    String v2Assignments = join(joinTwo(v_2, v, "="), " ^ ");
+//
+//
+//    // Check claimPostc
+//    // Construct dummy claimPostc
+//    ICondition dummyPostc = claimPrec.and(thenHypPostc).and(elseHypPostc).and(new Condition(v1Assignments)).and(new Condition(v2Assignments));
+//    // Do internal b_t subs before continuing to build expression
+//    ArrayList<String> b = claimPrec.getBTs();
+//    ArrayList<String> bPRenames = dummyPostc.getFreshVars(b.size());
+//    dummyPostc = dummyPostc.subs(bPRenames, b);
+//    // Set b = b1 ^ b2
+//    ArrayList<String> b1 = lHypPostc.getBTs();
+//    ArrayList<String> b2 = rHypPostc.getBTs();
+//
+//    String bAndClauses = join(joinTwo(b, joinTwo(b1, b2, "^"), "="), " ^ ");
+//    dummyPostc = dummyPostc.and(new Condition(bAndClauses));
+//    // Q1[v1'/v] and Q2[v2'/v] substitutions
+//    ArrayList<String> v_1P = dummyPostc.getFreshVars(v.size());
+//    ArrayList<String> v_2P = dummyPostc.getFreshVars(v.size());
+//    dummyPostc = claimPrec.and(lHypPostc.subs(v_1P, v)).and(rHypPostc.subs(v_2P, v)).and(new Condition(v1Assignments)).and(new Condition(v2Assignments)).subs(bPRenames, b).and(new Condition(bAndClauses));
+//    // Existential binds
+//    dummyPostc = dummyPostc.existentialBind(bPRenames).existentialBind(v_1).existentialBind(v_2).existentialBind(v_1P).existentialBind(v_2P);
+//
+//    // Build list of new vars bc ArrayLists are not functional
+//    ArrayList<String> newVars = bPRenames; newVars.addAll(v_1); newVars.addAll(v_2); newVars.addAll(v_1P); newVars.addAll(v_2P);
+//
+//    return claimProg.getNodeType().equals("And")  // Is child1 And child2
+//               && claimProg.getChildren()[0].equals(lHypProg)
+//               && claimProg.getChildren()[1].equals(rHypProg)
+//               && dummyPostc.isSubs(newVars, claimPostc);
+  }),
   While((x) -> true),
   Weaken((x) -> {
     if(x.getChildren().length != 1) {
@@ -473,7 +535,7 @@ public enum ProofFactory{
   static private final ArrayList<String> joinTwo(ArrayList<String> first, ArrayList<String> second, String joiner) {
     ArrayList<String> newList = new ArrayList<String>();
     for (int i = 0; i < first.size(); ++i) {
-        newList.add(joiner + "(" + first.get(i) + "," + second.get(i) + ")");
+        newList.add("(" + joiner + " " + first.get(i) + "," + second.get(i) + ")");
     }
     return newList;
   }
@@ -482,7 +544,7 @@ public enum ProofFactory{
    * Cats arraylist elems together with given joiner
    */
   static private final String join(ArrayList<String> arList, String joiner) {
-    return arList.stream().reduce("", (a, b) -> joiner + "( " + a + "," + b + ")");
+    return arList.stream().reduce("", (a, b) -> "( " + joiner + " " + a + "," + b + ")");
   }
 
   /**
