@@ -88,9 +88,9 @@ public class IntVarExpr extends Expr {
 
     @Override
     public String toSMT(HashMap<String, Integer> map) {
-        map.put(PREFIX + this.name, 0);
+        map.put(this.name, 0);
         // todo does this need to check for existential?
-        return PREFIX + this.name;
+        return this.name;
     }
 
     @Override

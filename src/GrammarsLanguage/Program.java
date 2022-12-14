@@ -111,7 +111,7 @@ public class Program implements IProgram {
             }
             stmtString.append(n);
         }
-        System.out.println(stmtString.toString());
+
         GrammarParser.ParserObject info = GrammarParser.getInstance().parseStatementLine(stmtString.toString());
         Program[] children = new Program[info.productionRules.size()];
 

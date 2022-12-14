@@ -9,12 +9,13 @@ public class Tester {
         String dir = "proof-files/";
 
         HashMap<String, Boolean> filesAndOutputs = new HashMap<>();
-        filesAndOutputs.put(dir + "zero_true.txt", true);
+//        filesAndOutputs.put(dir + "zero_true.txt", true);
+
+        filesAndOutputs.put(dir + "incorrect_hypotheses_false.txt", false);
 
         for(String file : filesAndOutputs.keySet()) {
             System.out.println("Verifying file: " + file);
             File proofFile = new File(file);
-            System.out.println(proofFile.getAbsoluteFile());
             Scanner currFile = new Scanner(proofFile);
             Proof root = Proof.parseProof(currFile);
             System.out.println("\tresult: " + root.validate() + "\texpected: " + filesAndOutputs.get(file));

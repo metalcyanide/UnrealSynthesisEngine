@@ -88,9 +88,9 @@ public class BoolVarExpr extends Expr {
 
     @Override
     public String toSMT(HashMap<String, Integer> map) {
-        map.put(PREFIX + this.name, 1);
+        map.put(this.name, 1);
         // todo does this need to check for existential?
-        return PREFIX + this.name;
+        return this.name;
     }
 
     @Override

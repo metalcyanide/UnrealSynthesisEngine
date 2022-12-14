@@ -4,12 +4,10 @@ import ConditionLanguage.Expressions.Boolean.*;
 import ConditionLanguage.Expressions.Expr;
 import ConditionLanguage.Expressions.Integer.*;
 
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 /*
@@ -175,43 +173,58 @@ public class Condition implements ICondition{
       fw.write("from z3 import * \n");
       for(String var : varMaps.keySet()) {
         if(varMaps.get(var) == 0) { // integer
-          fw.write(var + " = Int('" + var + "')");
+          fw.write(var + " = Int('" + var + "')\n");
         } else if(varMaps.get(var) == 1) { // boolean
-          fw.write(var + " = Bool('" + var + "')");
+          fw.write(var + " = Bool('" + var + "')\n");
         } else {
           throw new UnsupportedOperationException("unknown variable type for " + var);
         }
       }
 
+      String file_name = "result_smt" + (((int) (Math.random() * 10)) % 10) + ".txt";
       // write smt query to file
-      fw.write("constraints = " + z3_query);
-      fw.write("s = Solver()");
-      fw.write("s.add(constraints)");
-      fw.write("print(s.check())");
-      fw.write("print(s.model())");
+      fw.write("constraints = Not(" + z3_query+")\n");
+      fw.write("s = Solver()\n");
+      fw.write("s.add(constraints)\n");
+      fw.write("print(s.check())\n");
+//      fw.write("f = open(\""+ file_name + "\", 'w')\n");
+//      fw.write("f.write(str(s.check()))\n");
       fw.close();
 
 //    todo execute python3 on file
 //    todo read in terminal result
       String queryFilePath = "smt_query.py";
       String[] cmd = new String[2];
-      cmd[0] = "/Users/chaithanyanaikmude/opt/miniforge3/bin/python";
+      cmd[0] = "/usr/local/bin/python3";
       cmd[1] = queryFilePath;
 
       Runtime rt = Runtime.getRuntime();
       Process pr = rt.exec(cmd);
 
+      Thread.sleep(1000);
+
       BufferedReader bfr = new BufferedReader(new InputStreamReader(pr.getInputStream()));
       String line = "";
-      while((line = bfr.readLine()) != null) {
-          System.out.println(line);
+
+      BufferedReader err = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
+      String errorLine = "";
+      while((errorLine = err.readLine()) != null) {
+        System.err.println(errorLine);
       }
 
-      return true; //todo change to query result
+      while(true) {
+          line = bfr.readLine();
+          if(line != null) break;
 
-    } catch (IOException e) {
+        System.err.println(line);
+      }
+
+//      System.out.println("line: " + line);
+      return !line.equals("sat");
+
+    } catch (Exception e) {
       e.printStackTrace();
-      throw new IllegalStateException("error with discharging SMT query, need z3 installed");
+      throw new IllegalStateException("error with discharging SMT query");
     }
   }
 
@@ -222,6 +235,16 @@ public class Condition implements ICondition{
     Expr neg = new NotExpr(this.root);
     Expr query = new OrExpr(neg, ((Condition)b).root);
 	return checkSmtQuery(query);
+  }
+
+  public static void main(String[] args) throws Exception {
+    String var1 = "{|(BOOLVAR a)|}";
+    String var2 = "{|(BOOLVAR a)|}";
+
+    Condition c1 = new Condition(new Scanner(var1));
+    Condition c2 = new Condition(new Scanner(var2));
+
+    System.out.println(c1.implies(c2));
   }
 
   public String toString() {
