@@ -13,7 +13,7 @@ import GrammarsLanguage.GrammarParser;
 public class Program implements IProgram {
     // Singleton class
     ArrayList<String> terminals = new ArrayList<String>(Arrays.asList("True", "False", "0", "1"));
-    ArrayList<String> binaryOperators = new ArrayList<String>(Arrays.asList("+", "-", "*", "/", "^", "<", "=="));
+    ArrayList<String> binaryOperators = new ArrayList<String>(Arrays.asList("+", "-", "*", "/", "^", "<", "==", ":="));
     ArrayList<String> condStatements = new ArrayList<String>(Arrays.asList("ITE", "while"));
 
     private static Program instance = null;
@@ -100,12 +100,18 @@ public class Program implements IProgram {
         IProgram parsedStatement = null;
         GrammarParser.ParserObject info = GrammarParser.getInstance().parseStatementLine(readFrom.nextLine());
         Program[] children = new Program[info.productionRules.size()];
-        for(int i = 0; i < info.productionRules.size(); i++) {
-            GrammarParser.Node production = info.productionRules.get(i);
-            ArrayList<String> nonTerminals = info.nonTerminals;
-            children[i] = new Program(production, nonTerminals);
+        // for(int i = 0; i < info.productionRules.size(); i++) {
+        //     GrammarParser.Node production = info.productionRules.get(i);
+        //     ArrayList<String> nonTerminals = info.nonTerminals;
+        //     children[i] = new Program(production, nonTerminals);
+        // }
+        if(info.productionRules.size() == 1) {
+            children[0] = new Program(info.productionRules.get(0), nonTerminals);
         }
-
+        else {
+            children[0] = new Program(info.productionRules.get(0), nonTerminals);
+            children[1] = getProgramForChild(info.productionRules.get(1), nonTerminals);
+        }
         GrammarParser.Node root = GrammarParser.getInstance().new Node(info.nonTerminal);
         parsedStatement = new Program(root, children, nonTerminals);
 
@@ -148,9 +154,9 @@ public class Program implements IProgram {
             return node.value;
         }
         else if(node.nodeType == "Assign") {
-            return this.children[0].getVarName();
+            return node.first.value;
         }
-        return node.value;
+        return null;
     }
 
     /*
@@ -175,7 +181,13 @@ public class Program implements IProgram {
             System.out.println(child.getNodeType());
             System.out.println(child.getVars());
             if (child.getChildren() != null){
+                IProgram[] children = child.getChildren();
                 System.out.println(child.getChildren().length);
+                for (IProgram childs : children) {
+                    System.out.println(childs.getVarName());
+                    System.out.println(childs.getNodeType());
+                    System.out.println(childs.getVars());
+                }
             }
         }
         

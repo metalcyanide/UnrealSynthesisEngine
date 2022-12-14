@@ -14,7 +14,7 @@ import Proofs.Claim.IClaim;
 public class GrammarParser implements IGrammar {
     // Singleton class
     ArrayList<String> terminals = new ArrayList<String>(Arrays.asList("True", "False", "0", "1"));
-    ArrayList<String> binaryOperators = new ArrayList<String>(Arrays.asList("+", "-", "*", "/", "^", "<", "==", "While"));
+    ArrayList<String> binaryOperators = new ArrayList<String>(Arrays.asList("+", "-", "*", "/", "^", "<", "==", "While", ":="));
     ArrayList<String> condStatements = new ArrayList<String>(Arrays.asList("ITE"));
 
     HashMap<String, Program[]> nonTerminalMap = new HashMap<String, Program[]>();
@@ -90,7 +90,7 @@ public class GrammarParser implements IGrammar {
         typeMap.put("1", "1");
         typeMap.put("+", "Plus");
         typeMap.put("-", "Minus");
-        typeMap.put("x", "Times");
+        typeMap.put("*", "Times");
         typeMap.put("/", "Div");
         typeMap.put("^", "And");
         typeMap.put("<", "Less");
@@ -173,7 +173,7 @@ public class GrammarParser implements IGrammar {
             nodes.add(node);
             for (String component: ruleCompList){
                 // System.out.println(component);
-                if(Character.isUpperCase(component.toCharArray()[0])){
+                if(Character.isLowerCase(component.toCharArray()[0])){
                     if(!nonTerminals.contains(component)){
                         nonTerminals.add(component);
                     }
@@ -191,7 +191,7 @@ public class GrammarParser implements IGrammar {
         Node nodeLeft = createNode(ruleLeftComponents);
         ArrayList<String> ruleCompList = new ArrayList<>(Arrays.asList(ruleLeftComponents));
         for (String component: ruleCompList){
-            if(Character.isUpperCase(component.toCharArray()[0])){
+            if(Character.isLowerCase(component.toCharArray()[0])){
                 if(!nonTerminals.contains(component)){
                     nonTerminals.add(component);
                 }
@@ -209,7 +209,7 @@ public class GrammarParser implements IGrammar {
             Node nodeRight = createNode(ruleRightComponents);
             ruleCompList = new ArrayList<>(Arrays.asList(ruleLeftComponents));
             for (String component: ruleCompList){
-                if(Character.isUpperCase(component.toCharArray()[0])){
+                if(Character.isLowerCase(component.toCharArray()[0])){
                     if(!nonTerminals.contains(component)){
                         nonTerminals.add(component);
                     }
