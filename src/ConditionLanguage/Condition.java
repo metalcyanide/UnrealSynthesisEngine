@@ -156,7 +156,22 @@ public class Condition implements ICondition{
         Expr child2 = parseConditionString(remaining.substring(term1+1));
         return new GreaterExpr(child1, child2);
       }
-      case "": {
+      case "Ex": {
+        Expr child1 = parseConditionString(remaining.substring(0, term1));
+        Expr child2 = parseConditionString(remaining.substring(term1+1));
+        String varName = "";
+        if(child1 instanceof BoolVarExpr) {
+          varName = ((BoolVarExpr)child1).getName();
+        } else if(child1 instanceof IntVarExpr) {
+          varName = ((IntVarExpr)child1).getName();
+        } else {
+          throw new IllegalArgumentException("Cannot perform existential quantification over non-variables");
+        }
+
+        child2.existVar(varName);
+        return child2;
+      }
+      case "": { //degenerate case
         return new BoolConstExpr(true);
       }
       default:

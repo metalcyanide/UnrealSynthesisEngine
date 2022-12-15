@@ -1,0 +1,3 @@
+--> Zero [0] {} {|(BOOLCONST T)|}{0}{|(BOOLCONST T)|}
+--> Zero [1] {} {|(BOOLCONST T)|}{0}{|(BOOLCONST T)|}
+[0] [1] --> Seq [2] {} {|(BOOLCONST T)|}{0;0}{|(BOOLCONST T)|}
