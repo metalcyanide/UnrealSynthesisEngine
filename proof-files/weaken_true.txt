@@ -1,0 +1,2 @@
+--> Zero [0] {} {|(BOOLCONST T)|}{0}{|(BOOLCONST T)|}
+[0] --> Weaken [1] {} {|(BOOLCONST F)|}{0}{|(BOOLCONST T)|}

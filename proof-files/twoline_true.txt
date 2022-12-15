@@ -1,0 +1,2 @@
+--> Zero [0] {} {|(BOOLCONST T)|}{0}{|(BOOLCONST T)|}
+--> Zero [1] {} {|(BOOLCONST T)|}{0}{|(BOOLCONST T)|}

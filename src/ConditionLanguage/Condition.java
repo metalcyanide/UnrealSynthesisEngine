@@ -203,8 +203,6 @@ public class Condition implements ICondition{
       Runtime rt = Runtime.getRuntime();
       Process pr = rt.exec(cmd);
 
-      Thread.sleep(1000);
-
       BufferedReader bfr = new BufferedReader(new InputStreamReader(pr.getInputStream()));
       String line = "";
 

@@ -52,13 +52,13 @@ public class GrammarParser implements IGrammar {
         }
 
         public boolean equals(Node o){
-            if(this.value == o.value && this.nodeType == o.nodeType 
+            if(this.value.equals(o.value) && this.nodeType.equals(o.nodeType)
             && (o.first == null && this.first == null) 
             && (o.second == null && this.second == null) 
             && (o.third == null && this.third == null) ){
                 return true;
             }
-            else if(this.value == o.value && this.nodeType == o.nodeType 
+            else if(this.value.equals(o.value) && this.nodeType.equals(o.nodeType)
             && this.first.equals(o.first)
             && this.second.equals(o.second)
             && this.third.equals(o.second)){

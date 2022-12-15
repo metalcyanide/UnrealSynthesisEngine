@@ -1,0 +1,1 @@
+--> Assign [0] {} {|(= (INTVAR X) (INTCONST 0))|}{:= x + x 1}{|(= (INTVAR X) (INTCONST 0))|}
