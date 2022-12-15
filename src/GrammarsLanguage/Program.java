@@ -116,11 +116,11 @@ public class Program implements IProgram {
         Program[] children = new Program[info.productionRules.size()];
 
         if(info.productionRules.size() == 1) {
-            children[0] = new Program(info.productionRules.get(0), nonTerminals);
+            children[0] = getProgramForChild(info.productionRules.get(0), nonTerminals);
             return children[0];
         }
         else {
-            children[0] = new Program(info.productionRules.get(0), nonTerminals);
+            children[0] = getProgramForChild(info.productionRules.get(0), nonTerminals);
             children[1] = getProgramForChild(info.productionRules.get(1), nonTerminals);
         }
         GrammarParser.Node root = GrammarParser.getInstance().new Node(info.nonTerminal);
@@ -233,7 +233,7 @@ public class Program implements IProgram {
     /*
     * Test method for proof parsing
     */
-    public static void main(String args[]) throws Exception{
+    private static void main(String args[]) throws Exception{
         String statementExample = "{0; 0}";
         IProgram parsedInfo = parseStatement(new Scanner(statementExample));
         for (IProgram child : parsedInfo.getChildren()) {

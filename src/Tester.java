@@ -15,17 +15,17 @@ public class Tester {
 
         // proofs that should verify to true
         ArrayList<String> filesTrue = new ArrayList<>();
-//        filesTrue.add(dir + "true_zero.txt");
-//        filesTrue.add(dir + "true_twoline.txt");
-//        filesTrue.add(dir + "true_weaken.txt");
+        filesTrue.add(dir + "true_zero.txt");
+        filesTrue.add(dir + "true_twoline.txt");
+        filesTrue.add(dir + "true_weaken.txt");
         filesTrue.add(dir + "true_seq.txt");
 //        filesTrue.add(dir + "test.txt");
 
         // proofs that should verify to false
         ArrayList<String> filesFalse = new ArrayList<>();
-//        filesFalse.add(dir + "false_incorrect_hypotheses.txt");
-//        filesFalse.add(dir + "false_zero.txt");
-//        filesFalse.add(dir + "false_twoline.txt");
+        filesFalse.add(dir + "false_incorrect_hypotheses.txt");
+        filesFalse.add(dir + "false_zero.txt");
+        filesFalse.add(dir + "false_twoline.txt");
 
         verifyAndPrint(filesTrue, true);
         System.out.println();
