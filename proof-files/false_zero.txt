@@ -1,1 +1,1 @@
---> Zero [0] {} {|(BOOLCONST T)|}{0}{|(BOOLCONST F)|}
+--> Zero [0] {} {|(BOOLCONST T)|}{(0)}{|(BOOLCONST F)|}

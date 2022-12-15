@@ -1,0 +1,5 @@
+--> Zero [0] {} {|(BOOLCONST T)|}{(0)}{|(BOOLCONST T)|}
+--> Zero [1] {} {|(BOOLCONST T)|}{(0)}{|(BOOLCONST T)|}
+--> One [2] {} {|(BOOLCONST T)|}{(1)}{|(BOOLCONST T)|}
+[0] [2] --> Plus [3] {} {|(BOOLCONST T)|}{(+(0)(1))}{|(BOOLCONST T)|}
+[0] [3] --> Plus [4] {} {|(BOOLCONST T)|}{(+(0)(+(0)(1)))}{|(BOOLCONST T)|}

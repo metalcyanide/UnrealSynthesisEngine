@@ -1,1 +1,1 @@
---> Zero [0] {} {|(BOOLCONST T)|}{0}{|(Ex (INTVAR x) (BOOLCONST T))|}
+--> Zero [0] {} {|(BOOLCONST T)|}{(0)}{|(Ex (INTVAR x) (BOOLCONST T))|}

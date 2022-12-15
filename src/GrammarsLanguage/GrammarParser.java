@@ -118,7 +118,7 @@ public class GrammarParser implements IGrammar {
 
         String nodeType = "";
 
-        if(nodeValue == "") {
+        if(nodeValue.equals("")) {
             return null;
         }
 
@@ -242,6 +242,8 @@ public class GrammarParser implements IGrammar {
             return new Node(";", nodeLeft, nodeRight);
         }
     }
+
+
 
     public ParserObject parseStatementLine(String statementLine) {
         // Get references for proof nodes that are required to prove this one

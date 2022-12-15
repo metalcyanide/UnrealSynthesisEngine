@@ -1,3 +1,1 @@
---> Zero [0] {} {|(BOOLCONST T)|}{0}{|(BOOLCONST T)|}
---> Zero [1] {} {|(BOOLCONST T)|}{0}{|(BOOLCONST T)|}
-[0] [1] --> Plus [1] {} {|(BOOLCONST T)|}{+ 0 0}{|(BOOLCONST T)|}
+--> Zero [0] {} {|(BOOLCONST T)|}{(0)}{|(= (INTVAR x) (INTCONST 0))|}

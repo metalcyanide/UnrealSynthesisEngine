@@ -46,7 +46,7 @@ public interface IProgram {
    */
   public String getVarName();
 
-  public GrammarParser.Node getNode();
+//  public GrammarParser.Node getNode();
 
   public boolean equals(Object o);
 
