@@ -117,6 +117,7 @@ public class Program implements IProgram {
 
         if(info.productionRules.size() == 1) {
             children[0] = new Program(info.productionRules.get(0), nonTerminals);
+            return children[0];
         }
         else {
             children[0] = new Program(info.productionRules.get(0), nonTerminals);
@@ -136,17 +137,13 @@ public class Program implements IProgram {
         if(this.node.equals(((Program)o).node) 
         && this.nonTerminals ==((Program)o).nonTerminals
         && this.nodeType ==((Program)o).nodeType){
-            if(this.children == null && ((Program)o).children == null){
-                return true;
-            } 
-            boolean check = true;
-            for (int i = 0; i < children.length; i++) {
-                if(!this.children[i].equals(((Program)o).children[i])){
-                    check = false;
-                    break;
-                }
+            if(this.children == null && !(((Program)o).children == null)){
+                return false;
             }
-            return check;
+            else if(Arrays.equals(this.children, ((Program)o).children)){
+                return true;
+            }
+
         }
         return false;
     }
@@ -237,7 +234,7 @@ public class Program implements IProgram {
     * Test method for proof parsing
     */
     public static void main(String args[]) throws Exception{
-        String statementExample = "{:= x 1}";
+        String statementExample = "{0; 0}";
         IProgram parsedInfo = parseStatement(new Scanner(statementExample));
         for (IProgram child : parsedInfo.getChildren()) {
             System.out.println(parsedInfo.getChildren().length);
