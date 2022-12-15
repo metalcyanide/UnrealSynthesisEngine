@@ -128,8 +128,35 @@ public class Program implements IProgram {
         return parsedStatement;
     }
 
+    @Override
+    public boolean equals(Object o){
+        if (!(o instanceof Program)) {
+            return false;
+        }
+        if(this.node.equals(((Program)o).node) 
+        && this.nonTerminals ==((Program)o).nonTerminals
+        && this.nodeType ==((Program)o).nodeType){
+            if(this.children == null && ((Program)o).children == null){
+                return true;
+            } 
+            boolean check = true;
+            for (int i = 0; i < children.length; i++) {
+                if(!this.children[i].equals(((Program)o).children[i])){
+                    check = false;
+                    break;
+                }
+            }
+            return check;
+        }
+        return false;
+    }
+
     public String getNodeType(){
         return nodeType;
+    }
+
+    public GrammarParser.Node getNode(){
+        return node;
     }
 
     /*
@@ -176,29 +203,45 @@ public class Program implements IProgram {
         return nonTerminals;
     }
 
+    public static void printAST(GrammarParser.Node node){
+        if(node == null){
+            System.out.println("empty node");
+            return;
+        }
+        else if(node.value != null){
+            System.out.println("\nleaf node");
+            System.out.println(node.value);
+            System.out.println(node.nodeType);
+            System.out.println("first node");
+            printAST(node.first);
+            System.out.println("second node");
+            printAST(node.second);
+            System.out.println("third node");
+            printAST(node.third);
+            System.out.println("\n");
+            return;
+        }
+        else {
+            System.out.println("\nfirst node");
+            printAST(node.first);
+            System.out.println("second node");
+            printAST(node.second);
+            System.out.println("third node");
+            printAST(node.third);
+            System.out.println("\n");
+        }
+        return;
+    }
+
     /*
     * Test method for proof parsing
     */
     public static void main(String args[]) throws Exception{
-        String grammarExample = "A ::= + x B ;; - B C ;; b := 1 ;; E";
-        String statementExample = "+ x B ; := B C ; b := 1 ; E";
-
-        // ParseObject parsedInfo = GrammarParser.getInstance().parseGrammarLines(grammarExample);
-        IProgram parsedInfoGrammar = parseGrammar(new Scanner(grammarExample));
+        String statementExample = "{:= x 1}";
         IProgram parsedInfo = parseStatement(new Scanner(statementExample));
         for (IProgram child : parsedInfo.getChildren()) {
-            System.out.println(child.getVarName());
-            System.out.println(child.getNodeType());
-            System.out.println(child.getVars());
-            if (child.getChildren() != null){
-                IProgram[] children = child.getChildren();
-                System.out.println(child.getChildren().length);
-                for (IProgram childs : children) {
-                    System.out.println(childs.getVarName());
-                    System.out.println(childs.getNodeType());
-                    System.out.println(childs.getVars());
-                }
-            }
+            System.out.println(parsedInfo.getChildren().length);
+            printAST(child.getNode());
         }
         
         

@@ -46,6 +46,10 @@ public interface IProgram {
    */
   public String getVarName();
 
+  public GrammarParser.Node getNode();
+
+  public boolean equals(Object o);
+
   /*
   * Returns a set containing all program variables in the program
   */

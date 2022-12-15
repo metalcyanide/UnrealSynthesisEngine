@@ -50,6 +50,22 @@ public class GrammarParser implements IGrammar {
             this.value = value;
             this.nodeType = setNodeType(value);
         }
+
+        public boolean equals(Node o){
+            if(this.value == o.value && this.nodeType == o.nodeType 
+            && (o.first == null && this.first == null) 
+            && (o.second == null && this.second == null) 
+            && (o.third == null && this.third == null) ){
+                return true;
+            }
+            else if(this.value == o.value && this.nodeType == o.nodeType 
+            && this.first.equals(o.first)
+            && this.second.equals(o.second)
+            && this.third.equals(o.second)){
+                return true;
+            }
+            return false;
+        }
     
         Node(String value) {
             this.value = value;
@@ -101,6 +117,10 @@ public class GrammarParser implements IGrammar {
         typeMap.put("while do", "While");
 
         String nodeType = "";
+
+        if(nodeValue == "") {
+            return null;
+        }
 
         if(Character.isUpperCase(nodeValue.toCharArray()[0])) {
             nodeType = "NonTerm";
@@ -226,39 +246,36 @@ public class GrammarParser implements IGrammar {
     public ParserObject parseStatementLine(String statementLine) {
         // Get references for proof nodes that are required to prove this one
         String regexSplitRHSLHS = ";";
-
+        // System.out.println(statementLine);
+        // System.out.println(statementLine.strip());
         String[] productionRuleComponents = statementLine.strip().split(regexSplitRHSLHS, 2);
+        // System.out.println(Arrays.toString(productionRuleComponents));
+        // System.out.println(productionRuleComponents.length);
 
         ArrayList<String> nonTerminals = new ArrayList<>();
         ArrayList<Node> nodes = new ArrayList<>();
-        String nonTerminal = productionRuleComponents[0];
-        if(productionRuleComponents.length == 2){
-        // for (String rule : productionRuleComponents){
-            // String[] ruleComponents = rule.strip().split( " ");
+        String nonTerminal = ";";
+        if (productionRuleComponents.length == 1 || productionRuleComponents[1].strip() == "" ) {
+            
+            nonTerminal = productionRuleComponents[0];
+            Node node;
+            if(productionRuleComponents[0].strip() == ""){
+                node = new Node();
+            }
+            else {
+                node = getNodeForStatement(productionRuleComponents[0], null, nonTerminals);
+            }
+            nodes.add(node);
+        }
+        else if(productionRuleComponents.length == 2){
             Node node = getNodeForStatement(productionRuleComponents[0], productionRuleComponents[1], nonTerminals);
-            // ArrayList<String> ruleCompList = new ArrayList<>(Arrays.asList(ruleComponents));
             nodes.add(node.first);
             nodes.add(node.second);
-            // for (String component: ruleCompList){
-            //     // System.out.println(component);
-            //     if(Character.isUpperCase(component.toCharArray()[0])){
-            //         nonTerminals.add(component);
-            //     }
-            // }    
-        // } 
-        }
-        else {
-            Node node = getNodeForStatement(productionRuleComponents[0], null, nonTerminals);
-            nodes.add(node);
         }
         
         ParserObject parsedInfo = new ParserObject(nonTerminal, nodes, nonTerminals);
         return parsedInfo;
     }
-
-    // public void updateMap(String t, Program[] children){
-    //     nonTerminalMap.put(t, children);
-    // }
 
     public IProgram[] getProductions(String t){
         return nonTerminalMap.get(t);
