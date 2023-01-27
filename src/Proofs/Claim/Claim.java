@@ -2,6 +2,8 @@ package Proofs.Claim;
 
 import ConditionLanguage.Condition;
 import ConditionLanguage.ICondition;
+import GrammarsLanguage.AGrammar;
+import GrammarsLanguage.Grammar;
 import GrammarsLanguage.IProgram;
 import GrammarsLanguage.Program;
 import Proofs.Context.Context;
@@ -29,11 +31,10 @@ public class Claim implements IClaim {
    * Public constructor of claim, from scanner
    * @param readFrom Scanner with string that has claim in it
    */
-  public Claim(Scanner readFrom) throws Exception {
-    this.context = new Context(readFrom);    // TODO fix these as static methods
+  public Claim(Scanner readFrom, AGrammar<Program> grammar) throws Exception {
+    this.context = new Context(readFrom, grammar);    // TODO fix these as static methods
     this.precondition = new Condition(readFrom);
-    this.partialProgram = Program.parseStatement(readFrom);
-    // new Context(readFrom);  // TODO implement actual program class @Chaithanya
+    this.partialProgram = Program.parseStatement(readFrom, grammar);
     this.postcondition = new Condition(readFrom);
   }
 

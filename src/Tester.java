@@ -1,3 +1,4 @@
+import GrammarsLanguage.Grammar;
 import Proofs.Proof;
 
 import java.io.File;
@@ -20,13 +21,14 @@ public class Tester {
 //        filesTrue.add(dir + "true_weaken.txt");
 //        filesTrue.add(dir + "true_seq.txt");
 //        filesTrue.add(dir + "test.txt");
-        filesTrue.add(dir + "five_liner.txt");
 
         // proofs that should verify to false
         ArrayList<String> filesFalse = new ArrayList<>();
 //        filesFalse.add(dir + "false_incorrect_hypotheses.txt");
 //        filesFalse.add(dir + "false_zero.txt");
 //        filesFalse.add(dir + "false_twoline.txt");
+//        filesFalse.add(dir + "false_complex.txt");
+        filesFalse.add(dir + "false_nonterm.txt");
 
         verifyAndPrint(filesTrue, true);
         System.out.println();
@@ -38,7 +40,7 @@ public class Tester {
             System.out.println("Verifying file: " + file);
             File proofFile = new File(file);
             Scanner currFile = new Scanner(proofFile);
-            Proof root = Proof.parseProof(currFile);
+            Proof root = Proof.parseProof(currFile, new Grammar(""));
             System.out.println("\tresult: " + root.validate() + "\texpected: " + expected);
 
             //todo: add profiling

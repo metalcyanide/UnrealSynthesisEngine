@@ -1,5 +1,7 @@
 package Proofs;
 
+import GrammarsLanguage.Grammar;
+import GrammarsLanguage.Program;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -74,7 +76,7 @@ public class ProofParser {
         ParserObject info = ProofParser.getInstance().parseProofLine(proofExample);
         System.out.println(info.claim);
 
-        Proof proof = Proof.parseProofLine(new Scanner(proofExample));
+        Proof proof = Proof.parseProofLine(new Scanner(proofExample), new Grammar(""));
         System.out.println(proof.getClaim());
         System.out.println(proof.validate());
     }

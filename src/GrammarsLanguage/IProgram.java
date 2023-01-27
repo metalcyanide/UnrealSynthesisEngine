@@ -26,32 +26,32 @@ public interface IProgram {
   * While - while do
   * NonTerm - T (non-terminal symbol)
   */
-  public String getNodeType();
+ String getNodeType();
 
   /*
    * Returns a list of the AST children of this node.
    * Return null if non-terminal.
    */
-  public IProgram[] getChildren();
+  IProgram[] getChildren();
 
   /*
    * If this node is a non-terminal, returns a list of rhs production rules as programs.
    */
-  public IProgram[] getProductionRHS();
+  IProgram[] getProductionRHS();
 
   /*
    * Returns var as string if program is a var (e.g., x).
    * Returns lhs of an assignment.
    * Else, returns null.
    */
-  public String getVarName();
+  String getVarName();
 
 //  public GrammarParser.Node getNode();
 
-  public boolean equals(Object o);
+  boolean equals(Object o);
 
   /*
   * Returns a set containing all program variables in the program
   */
-  public ArrayList<String> getVars();
+  ArrayList<String> getVars();
 }

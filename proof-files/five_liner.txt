@@ -1,1 +1,4 @@
---> Zero [0] {} {|(BOOLCONST T)|}{(0)}{|(= (INTVAR x) (INTCONST 0))|}
+--> One [0] {} {|(BOOLCONST T)|}{(1)}{|(BOOLCONST T)|}
+[0] --> Weaken [1] {} {|(BOOLCONST T)|}{(0)}{|(BOOLCONST T)|}
+[1] --> Assign [2] {} {|(BOOLCONST T)|}{(:=(vx)(1))}{|(BOOLCONST T)|}
+[2] --> Weaken [3] {} {|(BOOLCONST T)|}{(:=(vx)(1))}{|(BOOLCONST T)|}

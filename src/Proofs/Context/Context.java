@@ -1,6 +1,8 @@
 package Proofs.Context;
 
 import ConditionLanguage.Condition;
+import GrammarsLanguage.AGrammar;
+import GrammarsLanguage.Grammar;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -26,7 +28,7 @@ public class Context implements IContext {
     this.postconds = cont.getPostconds();
   }
 
-  public Context(Scanner readFrom) throws Exception {
+  public Context(Scanner readFrom, AGrammar<Program> grammar) throws Exception {
     preconds = new ArrayList<ICondition>();
     progs = new ArrayList<IProgram>();
     postconds = new ArrayList<ICondition>();
@@ -40,7 +42,7 @@ public class Context implements IContext {
     // Extract context string
     while (!readFrom.hasNext("}.*")) {
       preconds.add(new Condition(readFrom));
-      progs.add(Program.parseStatement(readFrom));
+      progs.add(Program.parseStatement(readFrom, grammar));
       postconds.add(new Condition(readFrom));
       if (readFrom.hasNext("}")) {
         break;

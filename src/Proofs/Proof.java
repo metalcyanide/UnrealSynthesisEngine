@@ -1,5 +1,8 @@
 package Proofs;
 
+import GrammarsLanguage.AGrammar;
+import GrammarsLanguage.Grammar;
+import GrammarsLanguage.Program;
 import Proofs.Claim.IClaim;
 import Proofs.Context.Context;
 import Proofs.IProof;
@@ -33,10 +36,10 @@ public class Proof implements IProof {
      * Parses an entire proof and returns the last line of
      * the proof, which we assume to be the root.
      */
-  public static Proof parseProof(Scanner readFrom) throws Exception {
-      Proof root = Proof.parseProofLine(readFrom);
+  public static Proof parseProof(Scanner readFrom, AGrammar<Program> grammar) throws Exception {
+      Proof root = Proof.parseProofLine(readFrom, grammar);
       while(readFrom.hasNextLine()) {
-          root = Proof.parseProofLine(readFrom);
+          root = Proof.parseProofLine(readFrom, grammar);
       }
 
       return root;
@@ -47,11 +50,11 @@ public class Proof implements IProof {
    * constructs a proof object describing said proof.
    * Should use the parse method of IULTriples. \todo Haven't added contexts yet...
    */
-  public static Proof parseProofLine(Scanner readFrom) throws Exception {
+  public static Proof parseProofLine(Scanner readFrom, AGrammar<Program> grammar) throws Exception {
     Proof parsedProof = null;
     //parses one proof line
     ProofParser.ParserObject info = ProofParser.getInstance().parseProofLine(readFrom.nextLine());
-    IClaim claim = new Claim(new Scanner(info.claim));
+    IClaim claim = new Claim(new Scanner(info.claim), grammar);
     Proof[] children = new Proof[info.references.size()];
     for(int i = 0; i < info.references.size(); i++) {
         children[i] = Proof.proofMap.get(info.references.get(i));

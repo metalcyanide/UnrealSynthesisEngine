@@ -16,93 +16,38 @@ public class Program implements IProgram {
     private static ArrayList<String> binaryOperators = new ArrayList<String>(Arrays.asList("+", "-", "*", "/", "^", "<", "==", ":=", ";"));
     private static ArrayList<String> condStatements = new ArrayList<String>(Arrays.asList("ITE", "while"));
 
-    private static Program instance = null;
-    private IProgram[] productions;
-    private Program() { }
-    public static Program getInstance() {
-        if(instance == null) {
-            instance = new Program();
-        }
-        return instance;
-    }
 
     private Program[] children; // Children of the Program
     private String nodeType;
     private String varOrTermName;
-    public static HashMap<String, IProgram> mapPrograms = new HashMap<String, IProgram>();
+    public final AGrammar<Program> grammar;
 
     /**
      * Generic constructor used in factories.
      */
-    private Program(String nodeType, Program[] children) {
+    private Program(String nodeType, Program[] children, AGrammar<Program> grammar) {
         this.children = children;
         this.nodeType = nodeType;
         this.varOrTermName = "";
+        this.grammar = grammar;
     }
 
-    private Program(String nodeType, Program[] children, String varOrTermName) {
+    private Program(String nodeType, Program[] children, String varOrTermName, AGrammar<Program> grammar) {
         this.children = children;
         this.nodeType = nodeType;
         this.varOrTermName = varOrTermName;
+        this.grammar = grammar;
     }
 
-
-    /**
-    * Given a scanner with a string representation of a proof (single line), constructs a proof object describing said proof.
-    * Should use the parse method of IULTriples. Haven't added contexts yet...
-    */
-//    public static IProgram parseGrammar(Scanner readFrom) throws Exception {
-//        IProgram parsedGrammarLine = null;
-//        //parses all grammar lines
-//        GrammarParser.ParserObject info = GrammarParser.getInstance().parseGrammarLine(readFrom.nextLine());
-//        Program[] children = new Program[info.productionRules.size()];
-//        for(int i = 0; i < info.productionRules.size(); i++) {
-//            GrammarParser.Node production = info.productionRules.get(i);
-//            ArrayList<String> nonTerminals = info.nonTerminals;
-//            children[i] = new Program(production, nonTerminals);
-//        }
-//
-//        GrammarParser.Node root = GrammarParser.getInstance().new Node(info.nonTerminal);
-//        // GrammarParser.updateMap(info.nonTerminal, children);
-//        parsedGrammarLine = new Program(root, children, nonTerminals);
-//        boolean checkKey = mapPrograms.containsKey(root.value);
-//
-//        if(checkKey == false){
-//            mapPrograms.put(root.value, parsedGrammarLine);
-//        }
-//        return parsedGrammarLine;
-//    }
-
-//    public static Program getProgramForChild(GrammarParser.Node production, ArrayList<String> nonTerminals) {
-//        Program[] children = new Program[2];
-//        if(production.first == null ){
-//            children[0] = null;
-//            children[1] = null;
-//            return new Program(production, children, nonTerminals);
-//        }
-//        else if(production.second == null) {
-//            children[0] = new Program(production.first, nonTerminals);
-//            children[1] = null;
-//            return new Program(production, children, nonTerminals);
-//        }
-//        else if(production.second != null && production.second.first != null){
-//            children[0] = new Program(production.first, nonTerminals);
-//            children[1] = getProgramForChild(production.second, nonTerminals);
-//            return new Program(production, children, nonTerminals);
-//        }
-//
-//        return new Program(production, children, nonTerminals);
-//    }
-
-    public static IProgram parseStatement(Scanner readFrom) throws Exception {
+    public static Program parseStatement(Scanner readFrom, AGrammar<Program> gram) throws Exception {
         pullScan(readFrom, "{");
-        Program retval = parseFrag(readFrom);
+        Program retval = parseFrag(readFrom, gram);
         pullScan(readFrom, "}");
         return retval;
     }
 
     // Expect (prog) and parse recursively
-    private static Program parseFrag(Scanner readFrom) throws Exception {
+    private static Program parseFrag(Scanner readFrom, AGrammar<Program> gram) throws Exception {
         if (!readFrom.findInLine(".").equals("(")) {
             System.out.println("bad prog frag");
             return null;
@@ -113,13 +58,13 @@ public class Program implements IProgram {
             pullScan(readFrom, ")");
             switch (body) {
                 case "F":
-                    return new Program("False", new Program[0]);
+                    return new Program("False", new Program[0], gram);
                 case "T":
-                    return new Program("True", new Program[0]);
+                    return new Program("True", new Program[0], gram);
                 case "0":
-                    return new Program("0", new Program[0]);
+                    return new Program("0", new Program[0], gram);
                 case "1":
-                    return new Program("1", new Program[0]);
+                    return new Program("1", new Program[0], gram);
             }
         }
         else if (binaryOperators.contains(body) || body.equals(":") || body.equals("=")) {
@@ -127,52 +72,52 @@ public class Program implements IProgram {
             Program r;
             switch (body) {
                 case "+":
-                    l = parseFrag(readFrom);
-                    r = parseFrag(readFrom);
+                    l = parseFrag(readFrom, gram);
+                    r = parseFrag(readFrom, gram);
                     pullScan(readFrom, ")");
-                    return new Program("Plus", new Program[] {l, r});
+                    return new Program("Plus", new Program[] {l, r}, gram);
                 case "-":
-                    l = parseFrag(readFrom);
-                    r = parseFrag(readFrom);
+                    l = parseFrag(readFrom, gram);
+                    r = parseFrag(readFrom, gram);
                     pullScan(readFrom, ")");
-                    return new Program("Minus", new Program[] {l, r});
+                    return new Program("Minus", new Program[] {l, r}, gram);
                 case "*":
-                    l = parseFrag(readFrom);
-                    r = parseFrag(readFrom);
+                    l = parseFrag(readFrom, gram);
+                    r = parseFrag(readFrom, gram);
                     pullScan(readFrom, ")");
-                    return new Program("Times", new Program[] {l, r});
+                    return new Program("Times", new Program[] {l, r}, gram);
                 case "/":
-                    l = parseFrag(readFrom);
-                    r = parseFrag(readFrom);
+                    l = parseFrag(readFrom, gram);
+                    r = parseFrag(readFrom, gram);
                     pullScan(readFrom, ")");
-                    return new Program("Div", new Program[] {l, r});
+                    return new Program("Div", new Program[] {l, r}, gram);
                 case "^":
-                    l = parseFrag(readFrom);
-                    r = parseFrag(readFrom);
+                    l = parseFrag(readFrom, gram);
+                    r = parseFrag(readFrom, gram);
                     pullScan(readFrom, ")");
-                    return new Program("And", new Program[] {l, r});
+                    return new Program("And", new Program[] {l, r}, gram);
                 case "<":
-                    l = parseFrag(readFrom);
-                    r = parseFrag(readFrom);
+                    l = parseFrag(readFrom, gram);
+                    r = parseFrag(readFrom, gram);
                     pullScan(readFrom, ")");
-                    return new Program("Less", new Program[] {l, r});
+                    return new Program("Less", new Program[] {l, r}, gram);
                 case ":":
                     pullScan(readFrom, "=");
-                    l = parseFrag(readFrom);
-                    r = parseFrag(readFrom);
+                    l = parseFrag(readFrom, gram);
+                    r = parseFrag(readFrom, gram);
                     pullScan(readFrom, ")");
-                    return new Program("Assign", new Program[] {l, r});
+                    return new Program("Assign", new Program[] {l, r}, gram);
                 case "=":
                     pullScan(readFrom, "=");
-                    l = parseFrag(readFrom);
-                    r = parseFrag(readFrom);
+                    l = parseFrag(readFrom, gram);
+                    r = parseFrag(readFrom, gram);
                     pullScan(readFrom, ")");
-                    return new Program("1", new Program[] {l, r});
+                    return new Program("1", new Program[] {l, r}, gram);
                 case ";":
-                    l = parseFrag(readFrom);
-                    r = parseFrag(readFrom);
+                    l = parseFrag(readFrom, gram);
+                    r = parseFrag(readFrom, gram);
                     pullScan(readFrom, ")");
-                    return new Program("Seq", new Program[] {l, r});
+                    return new Program("Seq", new Program[] {l, r}, gram);
             }
         }
         else if (condStatements.contains(body)) {
@@ -189,7 +134,7 @@ public class Program implements IProgram {
                     }
                     name.append(n);
                 }
-                return new Program("Var", new Program[0], name.toString());
+                return new Program("Var", new Program[0], name.toString(), gram);
             }
             if (body.equals("n")) { // if nonterm
                 while (true) {
@@ -200,7 +145,7 @@ public class Program implements IProgram {
                     }
                     name.append(n);
                 }
-                return new Program("NonTerm", new Program[0], name.toString());
+                return new Program("NonTerm", new Program[0], name.toString(), gram);
             }
         }
         System.out.println("unrecognizable prog frag");
@@ -243,13 +188,8 @@ public class Program implements IProgram {
     /*
     * If this node is a non-terminal, returns a list of rhs production rules as programs.
     */
-    public IProgram[] getProductionRHS(){
-        boolean checkKey = mapPrograms.containsKey(varOrTermName);
-
-        if(checkKey){
-            return mapPrograms.get(varOrTermName).getChildren();
-        }
-        return null;
+    public IProgram[] getProductionRHS() {
+        return (IProgram[]) grammar.getExpansions(this).toArray();
     }
 
     /*
@@ -257,7 +197,7 @@ public class Program implements IProgram {
     * Returns lhs of an assignment.
     * Else, returns null.
     */
-    public String getVarName(){
+    public String getVarName() {
         if(this.nodeType.equals("Var") || this.nodeType.equals("NonTerm")) {
             return varOrTermName;
         }
@@ -318,7 +258,7 @@ public class Program implements IProgram {
     */
     private static void main(String args[]) throws Exception{
         String statementExample = "{0; 0}";
-        IProgram parsedInfo = parseStatement(new Scanner(statementExample));
+        IProgram parsedInfo = parseStatement(new Scanner(statementExample), new Grammar(""));
         for (IProgram child : parsedInfo.getChildren()) {
             System.out.println(parsedInfo.getChildren().length);
 //            printAST(child);

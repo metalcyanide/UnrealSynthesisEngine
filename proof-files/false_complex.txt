@@ -1,0 +1,6 @@
+[0] --> Zero [0] {} {|(BOOLCONST T)|}{(0)}{|(= (INTCONST 0) (INTCONST 0))|}
+--> Var [1] {} {|(BOOLCONST T)|}{(vx)}{|(Ex (INTVAR x_2) (= (INTVAR x_2) (INTCONST 0)))|}
+[1] [1] --> Plus [2] {} {|(BOOLCONST T)|}{(+(vx)(vx))}{|(Ex (INTVAR x_2) (= (INTVAR x_2) (INTCONST 0)))|}
+[2] --> And [3] {} {|(BOOLCONST T)|}{(^(vx)(+(vx)(vx)))}{|(= (INTVAR x) (INTCONST 0))|}
+[3] --> Assign [4] {} {|(BOOLCONST T)|}{(:=(vy)(^(vx)(+(vx)(vx))))}{|(= (INTVAR x) (INTCONST 0))|}
+[4] --> Seq [5] {} {|(BOOLCONST T)|}{(;(0)(:=(vy)(^(vx)(+(vx)(vx)))))}{|(= (INTVAR x) (INTCONST 0))|}
