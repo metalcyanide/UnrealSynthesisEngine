@@ -13,10 +13,11 @@ public class Grammar extends AGrammar<Program> {
       if (line.split("::=").length != 2) throw new Exception("Grammar line " + line + "has incorrect number of ::=");
       String nonTerminal = line.split("::=")[0];
       LinkedList<Program> expansions = new LinkedList<Program>();
-      for ( String expansion : line.split("::=")[1].split("|")
+      for ( String expansion : line.split("::=")[1].split(" ")  // Lines of the form (nS)::={P1} {P2} {P3}...\n
       ) {
         expansions.add(Program.parseStatement(new Scanner(expansion), this));
       }
+      this.add(nonTerminal, expansions);
     }
   }
 

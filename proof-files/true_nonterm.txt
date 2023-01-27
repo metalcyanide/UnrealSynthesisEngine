@@ -1,0 +1,2 @@
+--> One [0] {} {|(BOOLCONST T)|}{(1)}{|(BOOLCONST T)|}
+[0] --> HP [1] {} {|(BOOLCONST T)|}{(nS)}{|(BOOLCONST T)|}

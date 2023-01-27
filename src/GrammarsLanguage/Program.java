@@ -2,6 +2,7 @@ package GrammarsLanguage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
@@ -189,7 +190,12 @@ public class Program implements IProgram {
     * If this node is a non-terminal, returns a list of rhs production rules as programs.
     */
     public IProgram[] getProductionRHS() {
-        return (IProgram[]) grammar.getExpansions(this).toArray();
+        LinkedList<Program> expansions = grammar.getExpansions(this);
+        IProgram[] out = new IProgram[expansions.size()];
+        for (int i = 0; i < out.length; i++) {
+            out[i] = expansions.get(i);
+        }
+        return out;
     }
 
     /*

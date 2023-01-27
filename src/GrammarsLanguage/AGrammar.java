@@ -10,14 +10,14 @@ import java.util.LinkedList;
  */
 public abstract class AGrammar<P extends IProgram> {
 
-  private HashMap<P, LinkedList<P>> gram;
+  private HashMap<String, LinkedList<P>> gram;
 
   public AGrammar(String grammarString) throws Exception {
     this();
   }
 
   public AGrammar() {
-      gram = new HashMap<P, LinkedList<P>>();
+      gram = new HashMap<String, LinkedList<P>>();
   }
 
   /**
@@ -26,12 +26,11 @@ public abstract class AGrammar<P extends IProgram> {
    * @param expansions  The expansions to add
    * @return  true if add successful, false else
    */
-  void add(P nonTerm, LinkedList<P> expansions) throws Exception {
-    if (!nonTerm.getNodeType().equals("NonTerm")) throw new Exception("LHS not non-terminal");
+  void add(String nonTerm, LinkedList<P> expansions) throws Exception {
     gram.put(nonTerm, expansions);
   }
 
   public LinkedList<P> getExpansions(P nonTerm) {
-    return gram.get(nonTerm);
+    return gram.get("(n" + nonTerm.getVarName() + ")");
   }
 }
