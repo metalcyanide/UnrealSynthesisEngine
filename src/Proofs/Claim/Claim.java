@@ -2,7 +2,6 @@ package Proofs.Claim;
 
 import ConditionLanguage.Condition;
 import ConditionLanguage.ICondition;
-import GrammarsLanguage.AGrammar;
 import GrammarsLanguage.Grammar;
 import GrammarsLanguage.IProgram;
 import GrammarsLanguage.Program;
@@ -31,7 +30,7 @@ public class Claim implements IClaim {
    * Public constructor of claim, from scanner
    * @param readFrom Scanner with string that has claim in it
    */
-  public Claim(Scanner readFrom, AGrammar<Program> grammar) throws Exception {
+  public Claim(Scanner readFrom, Grammar grammar) throws Exception {
     this.context = new Context(readFrom, grammar);    // TODO fix these as static methods
     this.precondition = new Condition(readFrom);
     this.partialProgram = Program.parseStatement(readFrom, grammar);

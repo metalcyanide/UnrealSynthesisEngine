@@ -1,13 +1,17 @@
 package GrammarsLanguage;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
-public class Grammar extends AGrammar<Program> {
+public class Grammar {
+
+  private HashMap<String, LinkedList<Program>> gram;
+
 
   public Grammar(String grammarString) throws Exception {
-    super();
+    gram = new HashMap<String, LinkedList<Program>>();
     for (String line: grammarString.split(System.getProperty("line.separator"))) {
       if (line.equals("")) continue;
       if (line.split("::=").length != 2) throw new Exception("Grammar line " + line + "has incorrect number of ::=");
@@ -21,4 +25,17 @@ public class Grammar extends AGrammar<Program> {
     }
   }
 
+  /**
+   * Adds a new nonterm, expansions pair to the grammar
+   * @param nonTerm The nonterminal to add
+   * @param expansions  The expansions to add
+   * @return  true if add successful, false else
+   */
+  public void add(String nonTerm, LinkedList<Program> expansions) throws Exception {
+    gram.put(nonTerm, expansions);
+  }
+
+  public LinkedList<Program> getExpansions(Program nonTerm) {
+    return gram.get("(n" + nonTerm.getVarName() + ")");
+  }
 }

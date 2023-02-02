@@ -21,26 +21,29 @@ public class Program implements IProgram {
     private Program[] children; // Children of the Program
     private String nodeType;
     private String varOrTermName;
-    public final AGrammar<Program> grammar;
+    public final Grammar grammar;
 
     /**
      * Generic constructor used in factories.
      */
-    private Program(String nodeType, Program[] children, AGrammar<Program> grammar) {
+    private Program(String nodeType, Program[] children, Grammar grammar) {
         this.children = children;
         this.nodeType = nodeType;
         this.varOrTermName = "";
         this.grammar = grammar;
     }
 
-    private Program(String nodeType, Program[] children, String varOrTermName, AGrammar<Program> grammar) {
+    private Program(String nodeType, Program[] children, String varOrTermName, Grammar grammar) {
         this.children = children;
         this.nodeType = nodeType;
         this.varOrTermName = varOrTermName;
         this.grammar = grammar;
     }
 
-    public static Program parseStatement(Scanner readFrom, AGrammar<Program> gram) throws Exception {
+    /*
+     * Expect {(prog)} and parse
+     */
+    public static Program parseStatement(Scanner readFrom, Grammar gram) throws Exception {
         pullScan(readFrom, "{");
         Program retval = parseFrag(readFrom, gram);
         pullScan(readFrom, "}");
@@ -48,7 +51,7 @@ public class Program implements IProgram {
     }
 
     // Expect (prog) and parse recursively
-    private static Program parseFrag(Scanner readFrom, AGrammar<Program> gram) throws Exception {
+    private static Program parseFrag(Scanner readFrom, Grammar gram) throws Exception {
         if (!readFrom.findInLine(".").equals("(")) {
             System.out.println("bad prog frag");
             return null;
